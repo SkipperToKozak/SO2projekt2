@@ -17,7 +17,7 @@ using namespace std;
 
 void Airport::initialize() {
     //przypisanie lotniska do wieży
-    flightControlTower = FlightControlTower();
+
     flightControlTower.initialize();
 
 

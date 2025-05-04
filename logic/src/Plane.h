@@ -12,6 +12,7 @@ enum class PlaneStatus {
     Arriving,
     Landing,
     Disembarking,
+    TurnaroundCheck,
     Refueling,
     Boarding,
     TakingOff,
@@ -82,6 +83,7 @@ private:
     void land();
     void disembarkPassengers();
     void refuel();
+    void turnaroundCheck();
     void boardPassengers();
     void takeOff();
 

@@ -20,6 +20,7 @@ void Plane::land() {
     if (airport.getFlightControlTower()->requestLanding(*this)) {;
         std::cout << "[Plane " << flightNumber <<"] ";
         std::cout << "is landing. " << randInt(0,5)<<std::endl;
+        status = PlaneStatus::Landing;
         std::this_thread::sleep_for(std::chrono::seconds(randInt(3, 8))); //LANDING SET FOR 10s
     } else {
         std::cout << "[Plane " << flightNumber <<"] ";
@@ -32,24 +33,40 @@ void Plane::disembarkPassengers() {
     std::cout << "[Plane " << flightNumber <<"] ";
     // Implement the logic for disembarking passengers
     std::cout << "Disembarking passengers." << std::endl;
+    status = PlaneStatus::Disembarking;
     std::this_thread::sleep_for( std::chrono::seconds(rand() % 3 + 10)); //DISEMBARKING SET FOR 10s
 }
-void Plane::boardPassengers() {
+void Plane::turnaroundCheck() {
     std::cout << "[Plane " << flightNumber <<"] ";
-    // Implement the logic for boarding passengers
-    std::cout << "Boarding passengers." << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(30)); //BOARDING SET FOR 30s
+    // Implement the logic for disembarking passengers
+    std::cout << "Disembarking passengers." << std::endl;
+    status = PlaneStatus::TurnaroundCheck;
+    std::this_thread::sleep_for( std::chrono::seconds(rand() % 3 + 10)); //DISEMBARKING SET FOR 10s
+
 }
 void Plane::refuel() {
     std::cout << "[Plane " << flightNumber <<"] ";
     // Implement the logic for refueling
     std::cout << "Refueling plane." << std::endl;
+    status = PlaneStatus::Refueling;
     std::this_thread::sleep_for(std::chrono::seconds(40)); //REFUELING SET FOR 40s
 }
+
+
+
+void Plane::boardPassengers() {
+    std::cout << "[Plane " << flightNumber <<"] ";
+    // Implement the logic for boarding passengers
+    std::cout << "Boarding passengers." << std::endl;
+    status = PlaneStatus::Boarding;
+    std::this_thread::sleep_for(std::chrono::seconds(30)); //BOARDING SET FOR 30s
+}
+
 void Plane::takeOff() {
     std::cout << "[Plane " << flightNumber <<"] ";
     // Implement the logic for taking off
     std::cout << "Plane is taking off." << std::endl;
+    status = PlaneStatus::TakingOff;
     std::this_thread::sleep_for(std::chrono::seconds(12)); //TAKEOFF SET FOR 12s
 }
 void Plane::run() {

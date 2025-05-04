@@ -18,7 +18,7 @@ add_executable(SO2projekt2 main.cpp
         logic/src/resources/Hangar.h
         logic/src/resources/Gate.cpp
         logic/src/resources/Gate.h
-        logic/src/resources/Terminal.cpp
-        logic/src/resources/Terminal.h
+        logic/src/Terminal.cpp
+        logic/src/Terminal.h
         logic/src/resources/Runway.cpp
         logic/src/resources/Runway.h)

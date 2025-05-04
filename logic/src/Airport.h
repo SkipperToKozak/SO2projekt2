@@ -14,7 +14,7 @@
 #include "Plane.h"
 
 //AIRPORT CONFIG
-#define NUM_RUNWAYS 2
+#define NUM_RUNWAYS 3
 #define NUM_HANGARS 5
 #define NUM_TERMINALS 2
 #define NUM_GATES 5
@@ -36,18 +36,6 @@ class Plane;
 class Runway;
 
 class Airport {
-public:
-
-
-    vector<Passenger> getPassengers() {
-        return passengers;
-    }
-
-    FlightControlTower *getFlightControlTower() {
-        return &flightControlTower;
-    };
-
-private:
     vector<Plane> planes;
     vector<thread> planes_threads;
 
@@ -60,8 +48,21 @@ private:
 
 
 public:
+
+    Airport()
+        : flightControlTower(NUM_RUNWAYS, NUM_GATES) { // Inicjalizacja flightControlTower
+    }
+
+    vector<Passenger> getPassengers() {
+        return passengers;
+    }
+
+    FlightControlTower *getFlightControlTower() {
+        return &flightControlTower;
+    };
     void initialize();
     void run();
+
 };
 
 

@@ -8,25 +8,30 @@
 #include <vector>
 
 #include "Plane.h"
+#include "Terminal.h"
 #include "resources/Runway.h"
 
-#define NUM_RUNWAYS 3
+
 
 
 
 class FlightControlTower {
-
+    Terminal terminal;
+    int numRunways;
     std::vector<Runway> runways;
 public:
-    FlightControlTower() = default;
+    FlightControlTower(int numRunways, int numGates)
+    : terminal(numGates), numRunways(numRunways) {
+        for (int i = 0; i < numRunways; ++i) {
+            runways.emplace_back(i);
+        }
+    }
     void initialize();
 
     bool requestLanding(Plane& plane);
     void requestTakeOff(Plane& plane);
 
-    void requestHangarAvailability(Plane &plane);
-
-    void requestTerminalAvailability(Plane &plane);
+    void requestTurnaroundCheck(Plane& plane);
 
     void requestRefueling(Plane& plane);
     void requestBoarding(Plane& plane);
