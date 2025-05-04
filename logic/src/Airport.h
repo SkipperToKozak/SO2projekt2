@@ -12,16 +12,16 @@
 #include "FlightControlTower.h"
 #include "Passenger.h"
 #include "Plane.h"
-#include "resources/Runway.h"
+
 //AIRPORT CONFIG
 #define NUM_RUNWAYS 2
 #define NUM_HANGARS 5
 #define NUM_TERMINALS 2
 #define NUM_GATES 5
 #define NUM_PASSENGERS 10
-#define NUM_PLANES 10
+#define NUM_PLANES 3
 
-//PLANES CONFIG
+//PLANES INIT CONFIG
 #define PLANE_PASSENGER_LIMIT 100
 #define MAX_PLANE_FUEL_CAPACITY 1000
 #define MIN_PLANE_FUEL_CAPACITY 400
@@ -30,7 +30,24 @@
 
 using namespace std;
 
+class FlightControlTower;
+class Passenger;
+class Plane;
+class Runway;
+
 class Airport {
+public:
+
+
+    vector<Passenger> getPassengers() {
+        return passengers;
+    }
+
+    FlightControlTower *getFlightControlTower() {
+        return &flightControlTower;
+    };
+
+private:
     vector<Plane> planes;
     vector<thread> planes_threads;
 
@@ -39,7 +56,7 @@ class Airport {
 
     FlightControlTower flightControlTower;
 
-    vector<Runway> runways;
+
 
 
 public:

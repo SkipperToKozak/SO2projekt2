@@ -4,12 +4,24 @@
 
 #ifndef FLIGHTCONTROLTOWER_H
 #define FLIGHTCONTROLTOWER_H
+#include <mutex>
+#include <vector>
+
 #include "Plane.h"
+#include "resources/Runway.h"
+
+#define NUM_RUNWAYS 3
+
 
 
 class FlightControlTower {
+
+    std::vector<Runway> runways;
 public:
-    void requestLanding(Plane& plane);
+    FlightControlTower() = default;
+    void initialize();
+
+    bool requestLanding(Plane& plane);
     void requestTakeOff(Plane& plane);
 
     void requestHangarAvailability(Plane &plane);

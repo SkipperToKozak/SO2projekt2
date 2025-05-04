@@ -4,9 +4,9 @@
 
 #ifndef PLANE_H
 #define PLANE_H
+#include <random>
 #include <string>
 
-#include "resources/Runway.h"
 
 enum class PlaneStatus {
     Arriving,
@@ -18,57 +18,72 @@ enum class PlaneStatus {
     InFlight
 };
 
+class Airport;
+
+
+
 class Plane {
-    Plane(std::string flightNumber, int passengersOnBoard, int passengerLimit, int currentFuel, int fuelCapacity)
-            : flightNumber(flightNumber), passengerLimit(passengerLimit), passengersOnBoard(passengersOnBoard),
-    currentFuel(currentFuel), fuelCapacity(fuelCapacity) {}
 
 public:
-    void run();
-    void land();
-    void disembarkPassengers();
-    void refuel();
-    void boardPassengers();
-    void takeOff();
+    Plane(Airport& airport, std::string flightNumber, int passengersOnBoard, int passengerLimit, int currentFuel, int fuelCapacity)
+    : airport(airport), flightNumber(flightNumber), passengerLimit(passengerLimit), passengersOnBoard(passengersOnBoard),
+      currentFuel(currentFuel), fuelCapacity(fuelCapacity) {
+    }
 
-    [[nodiscard]] std::string get_flight_number() const {
+    void run();
+
+    [[nodiscard]] std::string getFlightNumber() const {
         return flightNumber;
     }
 
-    [[nodiscard]] int get_passenger_limit() const {
+    [[nodiscard]] int getPassengerLimit() const {
         return passengerLimit;
     }
 
-    [[nodiscard]] int get_passengers_on_board() const {
+    [[nodiscard]] int getPassengersOnBoard() const {
         return passengersOnBoard;
     }
 
-    [[nodiscard]] int get_fuel_needed() const {
+    [[nodiscard]] int getFuelNeeded() const {
         return currentFuel;
     }
 
-    [[nodiscard]] PlaneStatus get_status() const {
+    [[nodiscard]] PlaneStatus getStatus() const {
         return status;
     }
-
-    [[nodiscard]] Runway * get_runway() const {
-        return runway;
+    static std::string randomFlightID() {
+        std::string id = "";
+        for (int i = 0; i < 3; ++i) {
+            id += 'A' + rand() % 26; // Random uppercase letter
+        }
+        id+=" ";
+        id+=std::to_string((rand() % 900+100)); // Random number
+        return id;
+    }
+    int randInt(int min, int max) {
+        std::random_device rd;
+        std::mt19937 mt(rd());
+        std::uniform_int_distribution<int> distribution(min, max);
+        return distribution(mt);
     }
 
-    void set_runway(Runway *runway) {
-        this->runway = runway;
-    }
 
-    static std::string randomFlightNumber();
 private:
+    Airport& airport;
     std::string flightNumber = "";
     int passengerLimit = 0;
     int passengersOnBoard = 0;
     int currentFuel = 0;
     int currentRunway = 0;
     int fuelCapacity = 0;
-    Runway* runway = nullptr;
     PlaneStatus status = PlaneStatus::Arriving;
+
+
+    void land();
+    void disembarkPassengers();
+    void refuel();
+    void boardPassengers();
+    void takeOff();
 
 
 

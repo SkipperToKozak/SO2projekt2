@@ -16,9 +16,9 @@
 using namespace std;
 
 void Airport::initialize() {
-
-
-    runways = vector<Runway>(NUM_RUNWAYS);
+    //przypisanie lotniska do wieży
+    flightControlTower = FlightControlTower();
+    flightControlTower.initialize();
 
 
     //Tworzenie pasażerów
@@ -28,12 +28,12 @@ void Airport::initialize() {
 
     //Tworzenie samolotów
     for (int i = 0; i < NUM_PLANES; ++i) {
-        string flightNumber = Plane::randomFlightNumber();
+        string flightNumber = Plane::randomFlightID();
 
         // Sprawdzenie, czy numer lotu jest unikalny
         for (Plane plane : planes) {
-            while (plane.get_flight_number()==flightNumber) {
-                flightNumber = Plane::randomFlightNumber();
+            while (plane.getFlightNumber()==flightNumber) {
+                flightNumber = Plane::randomFlightID();
             }
         }
 
@@ -43,18 +43,20 @@ void Airport::initialize() {
         int fuelCapacity = rand() % (MAX_PLANE_FUEL_CAPACITY-MIN_PLANE_FUEL_CAPACITY)+ MIN_PLANE_FUEL_CAPACITY;
         int currentFuel = rand() % (fuelCapacity)+1;
 
-
-        //Przypisane do samolotu
-        planes.emplace_back(flightNumber,passengersOnBoard, passengerLimit, currentFuel, fuelCapacity);
+        Plane plane(*this, flightNumber, passengersOnBoard, passengerLimit, currentFuel, fuelCapacity);
+        //Przypisanie do samolotu lotniska
+        planes.emplace_back(plane);
         std::cout << "Plane " << flightNumber << " is running." << std::endl;
     }
 
-    // //Uruchamianie wątków
-    // for (auto& passenger : passengers) {
-    //     passengers_threads.emplace_back(&Passenger::run, &passenger);
-    // }
+    //Laubching planes' threads
     for (auto& plane : planes) {
         planes_threads.emplace_back(&Plane::run, &plane);
+        this_thread::sleep_for(10ms); // Sleep for 100 milliseconds to simulate staggered start
+    }
+    //Waiting for planes' threads to finish
+    for (int i = 0; i < NUM_PLANES; i++) {
+        planes_threads[i].join();
     }
 
 
@@ -78,12 +80,6 @@ void Airport::run() {
     //     std::cout << "Passenger is boarding." << std::endl;
     // }
 
-
-    // Simulate flight operations
-    for (auto& plane : planes) {
-        plane.run();
-        std::cout << "Plane is taking off." << std::endl;
-    }
 
     std::cout << "Airport simulation ended." << std::endl;
 }
