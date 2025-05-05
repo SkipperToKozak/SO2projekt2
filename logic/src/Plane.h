@@ -11,10 +11,13 @@
 enum class PlaneStatus {
     Arriving,
     Landing,
+    TaxiingFromRunway,
     Disembarking,
     TurnaroundCheck,
     Refueling,
     Boarding,
+    WaitingForRunway,
+    TaxiingToRunway,
     TakingOff,
     InFlight
 };
@@ -79,12 +82,15 @@ private:
     int fuelCapacity = 0;
     PlaneStatus status = PlaneStatus::Arriving;
 
+   static bool ready;
+
 
     void land();
     void disembarkPassengers();
     void refuel();
     void turnaroundCheck();
     void boardPassengers();
+    void taxiing();
     void takeOff();
 
 

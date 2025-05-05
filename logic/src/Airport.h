@@ -17,7 +17,7 @@
 #define NUM_RUNWAYS 3
 #define NUM_HANGARS 5
 #define NUM_TERMINALS 2
-#define NUM_GATES 5
+#define NUM_GATES 2
 #define NUM_PASSENGERS 10
 #define NUM_PLANES 3
 

@@ -23,16 +23,15 @@ public:
     }
 //do przerobienia w kontekście mutexów (lockguard raczej powinien być w gacie)
     //przekminic tez to czy nie lepiej jakos inaczej zarzadzac przypisywaniem indexu gate'a
-    bool assignGate(const std::string& planeId, int& assignedGateIndex) {
+    Gate* assignGate(const std::string& planeId) {
         std::lock_guard<std::mutex> lock(mutex);
         for (auto& gate : gates) {
             if (gate.isGateAvailable()) {
                 gate.blockGate(planeId);
-                assignedGateIndex = gate.getIndex();
-                return true;
+                return &gate;
             }
         }
-        return false; // Brak dostępnych gate'ów
+        return nullptr; // Brak dostępnych gate'ów
     }
 //przekminic
     void releaseGate(int gateIndex) {

@@ -29,14 +29,14 @@ public:
     void initialize();
 
     bool requestLanding(Plane& plane);
-    void requestTakeOff(Plane& plane);
+    bool requestTakeOff(Plane& plane);
 
-    void requestTurnaroundCheck(Plane& plane);
+    bool requestTurnaroundCheck(Plane& plane);
 
-    void requestRefueling(Plane& plane);
-    void requestBoarding(Plane& plane);
-    void requestDisembarking(Plane& plane);
-    void requestRunwayAvailability(Plane& plane);
+    bool requestRefueling(Plane& plane);
+    bool requestBoarding(Plane& plane);
+    bool requestDisembarking(Plane& plane);
+    bool requestRunwayAvailability(Plane& plane);
 
 };
 

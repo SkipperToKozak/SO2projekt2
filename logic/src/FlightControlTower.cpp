@@ -33,30 +33,43 @@ bool FlightControlTower::requestLanding(Plane &plane) {
 
 }
 
-void FlightControlTower::requestDisembarking(Plane &plane) {
-    //Check if gate is available
+bool FlightControlTower::requestDisembarking(Plane &plane) {
+    Gate* gate = terminal.assignGate(plane.getFlightNumber());
+    //Check if gate is null
+    if (gate == nullptr) {
+        std::cout << fctTag;
+        std::cout << "No available gates for plane " << plane.getFlightNumber() << std::endl;
+        return false;
+    }
+    else {
+        std::cout << fctTag;
+        std::cout << "Plane " << plane.getFlightNumber() << " is disembarking passengers at gate " << gate->getIndex() << std::endl;
+        return true;
+    }
+//(gate ? std::to_string(gate->getIndex()) : "none")
 
 
 }
-void FlightControlTower::requestTurnaroundCheck(Plane &plane) {
+bool FlightControlTower::requestTurnaroundCheck(Plane &plane) {
     //Check if engineers are available
+    return true;
 }
 
 
-void FlightControlTower::requestRefueling(Plane &plane) {
+bool FlightControlTower::requestRefueling(Plane &plane) {
     //Check if tanker is available
-
+    return true;
 }
-void FlightControlTower::requestBoarding(Plane &plane) {
+bool FlightControlTower::requestBoarding(Plane &plane) {
     //Check if cargo is available
+    return true;
+}
+bool FlightControlTower::requestRunwayAvailability(Plane &plane) {
+    return true;
 
 }
-void FlightControlTower::requestRunwayAvailability(Plane &plane) {
-
-
-}
-void FlightControlTower::requestTakeOff(Plane &plane) {
-
+bool FlightControlTower::requestTakeOff(Plane &plane) {
+    return true;
 
 }
 

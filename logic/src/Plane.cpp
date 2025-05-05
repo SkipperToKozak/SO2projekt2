@@ -8,11 +8,13 @@
 #include <iostream>
 #include <thread>
 #include <random>
+#include <mutex>
+#include <condition_variable>
 
 #include "Airport.h"
 #include "FlightControlTower.h"
 
-
+std::condition_variable cv;
 
 void Plane::land() {
     // Implement the logic for landing
@@ -31,8 +33,16 @@ void Plane::land() {
 }
 void Plane::disembarkPassengers() {
     std::cout << "[Plane " << flightNumber <<"] ";
+    if (airport.getFlightControlTower()->requestDisembarking(*this)) {
+        std::cout << "is disembarking passengers." << std::endl;
+        status = PlaneStatus::Disembarking;
+        std::this_thread::sleep_for(std::chrono::seconds(randInt(3, 8))); //DISAMBARKING SET FOR 10s
+    } else {
+        std::cout << "[Plane " << flightNumber <<"] ";
+        std::cout << "is waiting for disembarkation." << std::endl;
+        disembarkPassengers();
+    }
     // Implement the logic for disembarking passengers
-    std::cout << "Disembarking passengers." << std::endl;
     status = PlaneStatus::Disembarking;
     std::this_thread::sleep_for( std::chrono::seconds(rand() % 3 + 10)); //DISEMBARKING SET FOR 10s
 }
@@ -60,6 +70,23 @@ void Plane::boardPassengers() {
     std::cout << "Boarding passengers." << std::endl;
     status = PlaneStatus::Boarding;
     std::this_thread::sleep_for(std::chrono::seconds(30)); //BOARDING SET FOR 30s
+    status = PlaneStatus::WaitingForRunway;
+}
+void Plane::taxiing() {
+    std::cout << "[Plane " << flightNumber <<"] ";
+    // Implement the logic for requesting a runway
+    std::cout << "Requesting runway." << std::endl;
+    if (airport.getFlightControlTower()->requestRunwayAvailability(*this)) {
+        std::cout << "Runway is available." << std::endl;
+        status = PlaneStatus::TaxiingToRunway;
+    } else {
+        std::cout << "Runway is not available." << std::endl;
+        //TODO stworzenie kolejki gdzie wieża będzie przechowywać samoloty i je powiadamiać ale na razie sleepfor
+        cv.wait(lock, [&] { return ready; }); // Czekaj, aż ready == true to trzeba przekminic
+
+        taxiing();
+    }
+    std::this_thread::sleep_for(std::chrono::seconds(10)); //REQUESTING RUNWAY SET FOR 10s
 }
 
 void Plane::takeOff() {
@@ -74,6 +101,7 @@ void Plane::run() {
     srand(time(NULL));
     land();
     disembarkPassengers();
+    turnaroundCheck();
     refuel();
     boardPassengers();
     takeOff();
