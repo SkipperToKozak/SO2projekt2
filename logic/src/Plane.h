@@ -4,6 +4,7 @@
 
 #ifndef PLANE_H
 #define PLANE_H
+#include <condition_variable>
 #include <random>
 #include <string>
 
@@ -28,11 +29,64 @@ class Airport;
 
 class Plane {
 
+    std::mutex mutex;
+    Airport& airport;
+    std::string flightNumber = "";
+    int passengerLimit = 0;
+    int passengersOnBoard = 0;
+    int currentFuel = 0;
+    int currentRunway = 0;
+    int fuelCapacity = 0;
+    PlaneStatus status = PlaneStatus::Arriving;
+
+    bool ready;
+    std::condition_variable cv;
+
+
+    void land();
+    void disembarkPassengers();
+    void refuel();
+    void turnaroundCheck();
+    void boardPassengers();
+    void taxiing();
+    void takeOff();
+
+
 public:
     Plane(Airport& airport, std::string flightNumber, int passengersOnBoard, int passengerLimit, int currentFuel, int fuelCapacity)
     : airport(airport), flightNumber(flightNumber), passengerLimit(passengerLimit), passengersOnBoard(passengersOnBoard),
       currentFuel(currentFuel), fuelCapacity(fuelCapacity) {
     }
+    //blokowanie kopiowania aby mutex mogł byc w klasie
+    Plane(const Plane&) = delete;
+    Plane& operator=(const Plane&) = delete;
+
+    Plane(Plane&& other) noexcept
+    : airport(other.airport), // Referencja — można tylko skopiować
+    flightNumber(std::move(other.flightNumber)),
+    passengerLimit(other.passengerLimit),
+    passengersOnBoard(other.passengersOnBoard),
+    currentFuel(other.currentFuel),
+    currentRunway(other.currentRunway),
+    fuelCapacity(other.fuelCapacity),
+    status(other.status),
+    ready(other.ready){
+        // std::mutex i std::condition_variable nie są przenośne — pozostają domyślne
+    }
+
+    // //operator przenoszenia (na przyszlosc)
+    // Plane& operator=(Plane&& other) noexcept {
+    //     if (this != &other) {
+    //         // airport = other.airport;
+    //         passengerLimit = other.passengerLimit;
+    //         passengersOnBoard = other.passengersOnBoard;
+    //         currentFuel = other.currentFuel;
+    //         fuelCapacity = other.fuelCapacity;
+    //         flightNumber = std::move(other.flightNumber);
+    //         // Mutex nie jest przenoszony, pozostaje bez zmian
+    //     }
+    //     return *this;
+    // }
 
     void run();
 
@@ -72,26 +126,6 @@ public:
     }
 
 
-private:
-    Airport& airport;
-    std::string flightNumber = "";
-    int passengerLimit = 0;
-    int passengersOnBoard = 0;
-    int currentFuel = 0;
-    int currentRunway = 0;
-    int fuelCapacity = 0;
-    PlaneStatus status = PlaneStatus::Arriving;
-
-   static bool ready;
-
-
-    void land();
-    void disembarkPassengers();
-    void refuel();
-    void turnaroundCheck();
-    void boardPassengers();
-    void taxiing();
-    void takeOff();
 
 
 

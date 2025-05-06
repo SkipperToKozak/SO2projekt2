@@ -14,7 +14,7 @@
 #include "Airport.h"
 #include "FlightControlTower.h"
 
-std::condition_variable cv;
+
 
 void Plane::land() {
     // Implement the logic for landing
@@ -73,21 +73,24 @@ void Plane::boardPassengers() {
     status = PlaneStatus::WaitingForRunway;
 }
 void Plane::taxiing() {
-    std::cout << "[Plane " << flightNumber <<"] ";
-    // Implement the logic for requesting a runway
+    std::cout << "[Plane " << flightNumber << "] ";
     std::cout << "Requesting runway." << std::endl;
+
     if (airport.getFlightControlTower()->requestRunwayAvailability(*this)) {
         std::cout << "Runway is available." << std::endl;
         status = PlaneStatus::TaxiingToRunway;
     } else {
-        std::cout << "Runway is not available." << std::endl;
-        //TODO stworzenie kolejki gdzie wieża będzie przechowywać samoloty i je powiadamiać ale na razie sleepfor
-        cv.wait(lock, [&] { return ready; }); // Czekaj, aż ready == true to trzeba przekminic
-
-        taxiing();
+        std::cout << "Runway is not available. Waiting..." << std::endl;
+        std::unique_lock<std::mutex> lock(mutex);
+        cv.wait(lock, [this] { return ready; });
+        ready = false;  // Resetuj flagę
+        // taxiing();      // Ponów próbę
+        return;
     }
-    std::this_thread::sleep_for(std::chrono::seconds(10)); //REQUESTING RUNWAY SET FOR 10s
+
+    std::this_thread::sleep_for(std::chrono::seconds(10));
 }
+
 
 void Plane::takeOff() {
     std::cout << "[Plane " << flightNumber <<"] ";
@@ -104,5 +107,6 @@ void Plane::run() {
     turnaroundCheck();
     refuel();
     boardPassengers();
+    taxiing();
     takeOff();
 }
