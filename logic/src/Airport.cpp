@@ -53,15 +53,13 @@ void Airport::initialize() {
         planes_threads.emplace_back(&Plane::run, &plane);
         this_thread::sleep_for(10ms); // Sleep for 100 milliseconds to simulate staggered start
     }
+    std::cout << "Airport initialized." << std::endl;
+
     //Waiting for planes' threads to finish
     for (int i = 0; i < NUM_PLANES; i++) {
         planes_threads[i].join();
     }
 
-
-
-
-    std::cout << "Airport initialized." << std::endl;
 
 }
 

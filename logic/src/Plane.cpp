@@ -40,6 +40,7 @@ void Plane::disembarkPassengers() {
         status = PlaneStatus::Disembarking;
         std::this_thread::sleep_for(std::chrono::seconds(randInt(3, 8))); //DISAMBARKING SET FOR 10s
     } else {
+        //TODO mam wrazenie ze cos jest nie tak z czasem oczekiwania na koniec disembarkingu. Za dlugo to trwa, powinno kilka sekund (tylko gdy samolot nie uzyskal wczesniej gate'a)
         std::cout << "[Plane " << flightNumber <<"] ";
         std::cout << "is waiting for disembarkation." << std::endl;
         this_thread::sleep_for(std::chrono::seconds(15));
