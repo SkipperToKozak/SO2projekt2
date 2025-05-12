@@ -47,6 +47,10 @@ void Airport::initialize() {
         planes.emplace_back(*this, flightNumber, passengersOnBoard, passengerLimit, currentFuel, fuelCapacity);
         std::cout << "Plane " << flightNumber << " is running." << std::endl;
     }
+    //Tworzenie pasażerów
+    for (int i = 0; i < NUM_PASSENGERS; ++i) {
+        passengers.emplace_back();
+    }
 
     //Laubching planes' threads
     for (auto& plane : planes) {

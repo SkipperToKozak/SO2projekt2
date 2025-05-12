@@ -118,12 +118,6 @@ public:
         id+=std::to_string((rand() % 900+100)); // Random number
         return id;
     }
-    int randInt(int min, int max) {
-        std::random_device rd;
-        std::mt19937 mt(rd());
-        std::uniform_int_distribution<int> distribution(min, max);
-        return distribution(mt);
-    }
 
 
 

@@ -21,4 +21,5 @@ add_executable(SO2projekt2 main.cpp
         logic/src/Terminal.cpp
         logic/src/Terminal.h
         logic/src/resources/Runway.cpp
-        logic/src/resources/Runway.h)
+        logic/src/resources/Runway.h
+        logic/src/utilities/randomise.h)
