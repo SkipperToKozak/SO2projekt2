@@ -31,7 +31,7 @@ void Airport::initialize() {
         string flightNumber = Plane::randomFlightID();
 
         // Sprawdzenie, czy numer lotu jest unikalny
-        for (Plane plane : planes) {
+        for (Plane& plane : planes) {
             while (plane.getFlightNumber()==flightNumber) {
                 flightNumber = Plane::randomFlightID();
             }
@@ -43,9 +43,8 @@ void Airport::initialize() {
         int fuelCapacity = rand() % (MAX_PLANE_FUEL_CAPACITY-MIN_PLANE_FUEL_CAPACITY)+ MIN_PLANE_FUEL_CAPACITY;
         int currentFuel = rand() % (fuelCapacity)+1;
 
-        Plane plane(*this, flightNumber, passengersOnBoard, passengerLimit, currentFuel, fuelCapacity);
         //Przypisanie do samolotu lotniska
-        planes.emplace_back(plane);
+        planes.emplace_back(*this, flightNumber, passengersOnBoard, passengerLimit, currentFuel, fuelCapacity);
         std::cout << "Plane " << flightNumber << " is running." << std::endl;
     }
 

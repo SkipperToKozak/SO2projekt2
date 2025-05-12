@@ -40,6 +40,17 @@ public:
             gates[gateIndex].releaseGate();
         }
     }
+    void releaseGate(std::string planeId) {
+        std::lock_guard<std::mutex> lock(mutex);
+        for (auto& gate : gates) {
+            if (gate.getCurrentPlaneId() == planeId) {
+                gate.releaseGate();
+                break; // Przerywamy po znalezieniu odpowiedniego gate'a
+
+            }
+        }
+
+    }
 };
 
 

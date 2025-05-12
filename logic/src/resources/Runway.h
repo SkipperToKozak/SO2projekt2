@@ -25,7 +25,7 @@ public:
     Runway& operator=(const Runway&) = delete;
 
     ~Runway() {
-        std::cout << "Destruktor: " << index << std::endl;
+        // std::cout << "Destruktor: " << index << std::endl;
     }
 
 
@@ -64,6 +64,11 @@ public:
     }
     int getIndex() const {
         return index;
+    }
+
+    const std::string& getCurrentPlaneID() const {
+        std::lock_guard<std::mutex> lock(mutex);
+        return currentPlaneId;
     }
 };
 

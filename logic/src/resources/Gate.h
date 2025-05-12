@@ -65,6 +65,11 @@ public:
     int getIndex() const {
         return index;
     }
+
+    const std::string& getCurrentPlaneId() const {
+        std::lock_guard<std::mutex> lock(mutex);
+        return currentPlaneId;
+    }
 };
 
 

@@ -31,13 +31,14 @@ public:
     bool requestLanding(Plane& plane);
     bool requestTakeOff(Plane& plane);
 
-    bool requestTurnaroundCheck(Plane& plane);
+    void releaseRunway(Plane &plane);
 
+    bool requestTurnaroundCheck(Plane& plane);
     bool requestRefueling(Plane& plane);
     bool requestBoarding(Plane& plane);
     bool requestDisembarking(Plane& plane);
-    bool requestRunwayAvailability(Plane& plane);
-
+    bool requestRunwayAvailability(Plane& plane, int& runwayIndex);
+    bool requestTaxiing(Plane &plane);
 };
 
 
