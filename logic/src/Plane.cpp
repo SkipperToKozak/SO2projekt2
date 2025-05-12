@@ -82,7 +82,7 @@ void Plane::taxiing() {
     } else {
         std::cout << "Runway is not available." << std::endl;
         //TODO stworzenie kolejki gdzie wieża będzie przechowywać samoloty i je powiadamiać ale na razie sleepfor
-        cv.wait(lock, [&] { return ready; }); // Czekaj, aż ready == true to trzeba przekminic
+//        cv.wait(lock, [&] { return ready; }); // Czekaj, aż ready == true to trzeba przekminic
 
         taxiing();
     }
