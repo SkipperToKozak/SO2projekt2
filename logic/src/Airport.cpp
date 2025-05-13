@@ -77,7 +77,12 @@ void Airport::run() {
         std::cout << "Plane " << plane.getFlightNumber() << " is running." << std::endl;
     }
     //Launching passengers' threads
-    addPassengersGettingOnAPlane();
+    for (auto& passenger : passengers) {
+        passengers_threads.emplace_back(&Passenger::runGettingOnAPlane, &passenger);
+        this_thread::sleep_for(10ms); // Sleep for 100 milliseconds to simulate staggered start
+        std::cout << "Passenger " << passenger.getPassengerID() << " is running." << std::endl;
+    }
+    // addPassengersGettingOnAPlane();
 
     //Waiting for passengers' threads to finish
     for (auto & passengers_thread : passengers_threads) {
@@ -94,18 +99,12 @@ void Airport::run() {
 }
 
 void Airport::addPassengersGettingOnAPlane() {
-    int lastPassengerIndex = 0;
-    if (!passengers.empty()) {
-        lastPassengerIndex = passengers.size()-1;
-    }
-    else {
-        cout << "[AIRPORT] ";
-        cout << "Airport passenger list is empty." << endl;
-    }
-    for (int i = 0; i < NUM_PASSENGERS; ++i) {
+
+
+
         passengers.emplace_back(flightControlTower.getTerminal(), Plane::randomFlightID(), ++passengersNumber);
-        passengers_threads.emplace_back(&Passenger::runGettingOnAPlane, &passengers[i+lastPassengerIndex]);
-    }
+        passengers_threads.emplace_back(&Passenger::runGettingOnAPlane, &passengers.back());
+
 }
 void Airport::addPassengersLeavingThePlane() {
     int lastPassengerIndex = 0;

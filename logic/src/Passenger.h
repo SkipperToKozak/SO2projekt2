@@ -27,8 +27,8 @@ class Passenger {
     Terminal &terminal;
     int passengerID = 0;
     int numberOf = 0;
-    int gateIndex = 0;
-    std::string planeID = "";
+    int gateIndex = -1;
+    std::string planeID = " ";
     PassengerStatus status = PassengerStatus::ArrivingAtAirport;
 
     //entering a plane
@@ -52,7 +52,7 @@ public:
     explicit Passenger(Terminal& terminal): terminal(terminal) {
         numberOf = randInt(1, 10);
     }
-    int getPassengerID() const {
+    [[nodiscard]] int getPassengerID() const {
         return passengerID;
     }
 

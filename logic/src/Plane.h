@@ -7,6 +7,7 @@
 #include <condition_variable>
 #include <random>
 #include <string>
+#include <utility>
 
 
 enum class PlaneStatus {
@@ -55,7 +56,7 @@ class Plane {
 
 public:
     Plane(Airport& airport, std::string flightNumber, int passengersOnBoard, int passengerLimit, int currentFuel, int fuelCapacity)
-    : airport(airport), flightNumber(flightNumber), passengerLimit(passengerLimit), passengersOnBoard(passengersOnBoard),
+    : airport(airport), flightNumber(std::move(flightNumber)), passengerLimit(passengerLimit), passengersOnBoard(passengersOnBoard),
       currentFuel(currentFuel), fuelCapacity(fuelCapacity) {
     }
     //blokowanie kopiowania aby mutex mogł byc w klasie
@@ -112,6 +113,9 @@ public:
     }
     [[nodiscard]] int getGateIndex() const {
         return gateIndex;
+    }
+    void setGateIndex(int gateIndex) {
+        this->gateIndex = gateIndex;
     }
 
 

@@ -26,47 +26,74 @@ public:
     }
 //do przerobienia w kontekście mutexów (lockguard raczej powinien być w gacie)
     //przekminic tez to czy nie lepiej jakos inaczej zarzadzac przypisywaniem indexu gate'a
-    Gate* assignGate(const std::string& planeId) {
+    Gate* assignGate(const std::string& planeId, int planeLimit) {
         std::lock_guard<std::mutex> lock(mutex);
         for (auto& gate : gates) {
             if (gate.isGateAvailableForPlanes()) {
-                gate.blockGate(planeId);
+                gate.blockGate(planeId, planeLimit);
                 return &gate;
             }
         }
         return nullptr; // Brak dostępnych gate'ów
     }
-//przekminic
-    void releaseGate(int gateIndex) {
-        std::lock_guard<std::mutex> lock(mutex);
-        if (gateIndex >= 0 && gateIndex < gates.size()) {
-            gates[gateIndex].releaseGate();
-        }
-    }
+//TODO przekminic
+    // void releaseGate(int gateIndex) {
+    //     std::lock_guard<std::mutex> lock(mutex);
+    //     if (gateIndex >= 0 && gateIndex < gates.size()) {
+    //         gates[gateIndex].releaseGate();
+    //     }
+    // }
+    //TODO przekminic
     void releaseGate(const std::string& planeId) {
         std::lock_guard<std::mutex> lock(mutex);
         for (auto& gate : gates) {
             if (gate.getCurrentPlaneId() == planeId) {
                 gate.releaseGate();
+                gate.setGateClosedForPassengers();
                 break; // Przerywamy po znalezieniu odpowiedniego gate'a
 
             }
         }
 
     }
-    void setGateOpenedForPassengers(int gateIndex) {
-        gates[gateIndex].setGateOpenedForPassengers();
+    //przekminic czy tu powinny byc inty czy moze gejty czy moze string z nazwa samolotu
+    // void setGateOpenedForPassengers(int gateIndex) {
+    //     std::lock_guard<std::mutex> lock(mutex);
+    //     gates[gateIndex].setGateOpenedForPassengers();
+    // }
+    void setGateOpenedForPassengers(std::string planeId) {
+        for (auto& gate : gates) {
+            if (gate.getCurrentPlaneId() == planeId) {
+                gate.setGateOpenedForPassengers();
+                break; // Przerywamy po znalezieniu odpowiedniego gate'a
+
+            }
+        }
+
     }
+
     void setGateClosedForPassengers(int gateIndex) {
+        std::lock_guard<std::mutex> lock(mutex);
         gates[gateIndex].setGateClosedForPassengers();
     }
     bool isGateOpenedForPassengers(int &gateIndex, int passengerID) {
+        std::lock_guard<std::mutex> lock(mutex);
         for (auto& gate : gates) {
             if (gate.isGateAvailableForPassengers()) {
                 gateIndex = gate.getIndex();
                 std::cout << terminalTag;
                 std::cout << "Passenger " << passengerID << " is boarding at gate " << gateIndex << std::endl;
                 return true;
+            }
+        }
+        return false;
+    }
+    bool goThroughGate(int passengerSize) {
+        std::lock_guard<std::mutex> lock(mutex);
+        for (auto& gate : gates) {
+            if (gate.isGateAvailableForPassengers()) {
+
+                return gate.goThroughGate(passengerSize);;
             }
         }
         return false;

@@ -13,6 +13,7 @@
 
 class Gate {
     int index = 0;
+    int limit = 0;
     bool isAvailableForPlanes = true;
     bool isAvailableForPassengers = false;
     mutable std::mutex mutex; //mutable aby modyfikowac w constach
@@ -49,8 +50,9 @@ public:
     }
 
 
-    void blockGate(const std::string& planeId) {
+    void blockGate(const std::string& planeId, int planeLimit) {
         std::lock_guard<std::mutex> lock(mutex);
+        limit = planeLimit;
         isAvailableForPlanes = false;
         currentPlaneId = planeId;
     }
@@ -83,6 +85,13 @@ public:
     void setGateClosedForPassengers() {
         std::lock_guard<std::mutex> lock(mutex);
         isAvailableForPassengers = false;
+    }
+    bool goThroughGate(int passengerSize) {
+        if (limit < passengerSize) {
+            return false;
+        }
+        limit -= passengerSize;
+        return true;
     }
 };
 

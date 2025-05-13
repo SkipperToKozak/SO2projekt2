@@ -63,7 +63,7 @@ void Plane::refuel() {
     // Implement the logic for refueling
     std::cout << "Refueling plane." << std::endl;
     status = PlaneStatus::Refueling;
-    std::this_thread::sleep_for(std::chrono::seconds(40)); //REFUELING SET FOR 40s
+    std::this_thread::sleep_for(std::chrono::seconds(20)); //REFUELING SET FOR 20s
 }
 
 

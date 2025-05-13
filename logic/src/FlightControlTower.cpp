@@ -33,13 +33,14 @@ bool FlightControlTower::requestLanding(Plane &plane) {
 
 
 bool FlightControlTower::requestDisembarking(Plane &plane, int& gateIndex) {
-    Gate* gate = terminal.assignGate(plane.getFlightNumber());
+    Gate* gate = terminal.assignGate(plane.getFlightNumber(), plane.getPassengerLimit());
     //Check if gate is null
     if (gate == nullptr) {
         std::cout << fctTag;
         std::cout << "No available gates for plane " << plane.getFlightNumber() << std::endl;
         return false;
     }
+    plane.setGateIndex(gateIndex);
     std::cout << fctTag;
     std::cout << "Plane " << plane.getFlightNumber() << " is disembarking passengers at gate " << gate->getIndex() << std::endl;
     gateIndex = gate->getIndex();
@@ -61,7 +62,7 @@ bool FlightControlTower::requestRefueling(Plane &plane) {
 bool FlightControlTower::requestBoarding(Plane &plane) {
     //Check if cargo is available (int the future)
     if (true) {
-        terminal.setGateOpenedForPassengers(plane.getGateIndex());
+        terminal.setGateOpenedForPassengers(plane.getFlightNumber());
     }
 
     return true;
@@ -70,7 +71,6 @@ bool FlightControlTower::requestRunwayAvailability(Plane &plane, int &runwayInde
     for (auto &runway : runways) {
         if (runway.isRunwayAvailable()) {
             runway.blockRunway(plane.getFlightNumber());
-            terminal.setGateClosedForPassengers(plane.getGateIndex());
             runwayIndex = runway.getIndex();
             return true;
         }
