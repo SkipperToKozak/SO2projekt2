@@ -37,6 +37,7 @@ class Plane {
     int currentFuel = 0;
     int currentRunway = 0;
     int fuelCapacity = 0;
+    int gateIndex = -1;
     PlaneStatus status = PlaneStatus::Arriving;
 
     bool ready;
@@ -109,6 +110,11 @@ public:
     [[nodiscard]] PlaneStatus getStatus() const {
         return status;
     }
+    [[nodiscard]] int getGateIndex() const {
+        return gateIndex;
+    }
+
+
     static std::string randomFlightID() {
         std::string id = "";
         for (int i = 0; i < 3; ++i) {

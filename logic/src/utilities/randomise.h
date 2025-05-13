@@ -5,7 +5,8 @@
 #ifndef SO2PROJEKT2_RANDOMISE_H
 #define SO2PROJEKT2_RANDOMISE_H
 #include <random>
-int randInt(int min, int max) {
+
+inline int randInt(int min, int max) {
     std::random_device rd;
     std::mt19937 mt(rd());
     std::uniform_int_distribution<int> distribution(min, max);

@@ -8,5 +8,6 @@ int main(int argc, char *argv[]) {
 
     Airport airport;
     airport.initialize();
+    airport.run();
     return 0;
 }
