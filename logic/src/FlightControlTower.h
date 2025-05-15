@@ -36,9 +36,14 @@ public:
     bool requestTurnaroundCheck(Plane& plane);
     bool requestRefueling(Plane& plane);
     bool requestBoarding(Plane& plane);
-    bool requestDisembarking(Plane& plane);
+    bool requestDisembarking(Plane& plane, int& gateIndex);
     bool requestRunwayAvailability(Plane& plane, int& runwayIndex);
     bool requestTaxiing(Plane &plane);
+
+
+    Terminal &getTerminal() {
+        return terminal;
+    }
 };
 
 

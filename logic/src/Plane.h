@@ -7,6 +7,7 @@
 #include <condition_variable>
 #include <random>
 #include <string>
+#include <utility>
 
 
 enum class PlaneStatus {
@@ -37,6 +38,7 @@ class Plane {
     int currentFuel = 0;
     int currentRunway = 0;
     int fuelCapacity = 0;
+    int gateIndex = -1;
     PlaneStatus status = PlaneStatus::Arriving;
 
     bool ready;
@@ -54,7 +56,7 @@ class Plane {
 
 public:
     Plane(Airport& airport, std::string flightNumber, int passengersOnBoard, int passengerLimit, int currentFuel, int fuelCapacity)
-    : airport(airport), flightNumber(flightNumber), passengerLimit(passengerLimit), passengersOnBoard(passengersOnBoard),
+    : airport(airport), flightNumber(std::move(flightNumber)), passengerLimit(passengerLimit), passengersOnBoard(passengersOnBoard),
       currentFuel(currentFuel), fuelCapacity(fuelCapacity) {
     }
     //blokowanie kopiowania aby mutex mogł byc w klasie
@@ -109,6 +111,14 @@ public:
     [[nodiscard]] PlaneStatus getStatus() const {
         return status;
     }
+    [[nodiscard]] int getGateIndex() const {
+        return gateIndex;
+    }
+    void setGateIndex(int gateIndex) {
+        this->gateIndex = gateIndex;
+    }
+
+
     static std::string randomFlightID() {
         std::string id = "";
         for (int i = 0; i < 3; ++i) {
@@ -117,12 +127,6 @@ public:
         id+=" ";
         id+=std::to_string((rand() % 900+100)); // Random number
         return id;
-    }
-    int randInt(int min, int max) {
-        std::random_device rd;
-        std::mt19937 mt(rd());
-        std::uniform_int_distribution<int> distribution(min, max);
-        return distribution(mt);
     }
 
 

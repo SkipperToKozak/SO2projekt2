@@ -13,9 +13,12 @@
 
 class Gate {
     int index = 0;
-    bool isAvailable = true;
+    int limit = 0;
+    bool isAvailableForPlanes = true;
+    bool isAvailableForPassengers = false;
     mutable std::mutex mutex; //mutable aby modyfikowac w constach
     std::string currentPlaneId;
+
 public:
     Gate(int index)
         : index(index) {
@@ -32,14 +35,14 @@ public:
     //przenoszenie aby mutex mogł byc w klasie
     Gate(Gate&& other) noexcept
         : index(other.index),
-          isAvailable(other.isAvailable),
+          isAvailableForPlanes(other.isAvailableForPlanes),
           currentPlaneId(std::move(other.currentPlaneId)) {}
 
     //operator przenoszenia (na przyszlosc)
     Gate& operator=(Gate&& other) noexcept {
         if (this != &other) {
             index = other.index;
-            isAvailable = other.isAvailable;
+            isAvailableForPlanes = other.isAvailableForPlanes;
             currentPlaneId = std::move(other.currentPlaneId);
             // Mutex nie jest przenoszony, pozostaje bez zmian
         }
@@ -47,20 +50,21 @@ public:
     }
 
 
-    void blockGate(const std::string& planeId) {
+    void blockGate(const std::string& planeId, int planeLimit) {
         std::lock_guard<std::mutex> lock(mutex);
-        isAvailable = false;
+        limit = planeLimit;
+        isAvailableForPlanes = false;
         currentPlaneId = planeId;
     }
 
     void releaseGate() {
         std::lock_guard<std::mutex> lock(mutex);
         currentPlaneId.clear();
-        isAvailable = true;
+        isAvailableForPlanes = true;
     }
-    bool isGateAvailable() const {
+    bool isGateAvailableForPlanes() const {
         std::lock_guard<std::mutex> lock(mutex);
-        return isAvailable;
+        return isAvailableForPlanes;
     }
     int getIndex() const {
         return index;
@@ -69,6 +73,25 @@ public:
     const std::string& getCurrentPlaneId() const {
         std::lock_guard<std::mutex> lock(mutex);
         return currentPlaneId;
+    }
+    bool isGateAvailableForPassengers() const {
+        std::lock_guard<std::mutex> lock(mutex);
+        return isAvailableForPassengers;
+    }
+    void setGateOpenedForPassengers() {
+        std::lock_guard<std::mutex> lock(mutex);
+        isAvailableForPassengers = true;
+    }
+    void setGateClosedForPassengers() {
+        std::lock_guard<std::mutex> lock(mutex);
+        isAvailableForPassengers = false;
+    }
+    bool goThroughGate(int passengerSize) {
+        if (limit < passengerSize) {
+            return false;
+        }
+        limit -= passengerSize;
+        return true;
     }
 };
 

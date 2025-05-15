@@ -33,7 +33,7 @@ void Plane::land() {
 }
 void Plane::disembarkPassengers() {
 
-    if (airport.getFlightControlTower()->requestDisembarking(*this)) {
+    if (airport.getFlightControlTower()->requestDisembarking(*this, gateIndex)) {
         airport.getFlightControlTower()->releaseRunway(*this);
         std::cout << "[Plane " << flightNumber <<"] ";
         std::cout << "is disembarking passengers." << std::endl;
@@ -63,7 +63,7 @@ void Plane::refuel() {
     // Implement the logic for refueling
     std::cout << "Refueling plane." << std::endl;
     status = PlaneStatus::Refueling;
-    std::this_thread::sleep_for(std::chrono::seconds(40)); //REFUELING SET FOR 40s
+    std::this_thread::sleep_for(std::chrono::seconds(20)); //REFUELING SET FOR 20s
 }
 
 
@@ -73,6 +73,8 @@ void Plane::boardPassengers() {
     // Implement the logic for boarding passengers
     std::cout << "Boarding passengers." << std::endl;
     status = PlaneStatus::Boarding;
+    airport.getFlightControlTower()->requestBoarding(*this);
+
     std::this_thread::sleep_for(std::chrono::seconds(30)); //BOARDING SET FOR 30s
     status = PlaneStatus::WaitingForRunway;
 }

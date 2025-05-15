@@ -22,7 +22,7 @@
 #define NUM_PLANES 3
 
 //PLANES INIT CONFIG
-#define PLANE_PASSENGER_LIMIT 100
+#define PLANE_PASSENGER_LIMIT 20
 #define MAX_PLANE_FUEL_CAPACITY 1000
 #define MIN_PLANE_FUEL_CAPACITY 400
 // #define MIN_PLANE_FUEL_NEEDED 100
@@ -36,10 +36,13 @@ class Plane;
 class Runway;
 
 class Airport {
+
     vector<Plane> planes;
+    int planesNumber = 0;
     vector<thread> planes_threads;
 
     vector<Passenger> passengers;
+    int passengersNumber = 0;
     vector<thread> passengers_threads;
 
     FlightControlTower flightControlTower;
@@ -53,8 +56,8 @@ public:
         : flightControlTower(NUM_RUNWAYS, NUM_GATES) { // Inicjalizacja flightControlTower
     }
 
-    vector<Passenger> getPassengers() {
-        return passengers;
+    vector<Passenger> *getPassengers() {
+        return &passengers;
     }
 
     FlightControlTower *getFlightControlTower() {
@@ -62,6 +65,9 @@ public:
     };
     void initialize();
     void run();
+    void addPassengersGettingOnAPlane();
+    void addPassengersLeavingThePlane();
+    void addPlanes();
 
 };
 
