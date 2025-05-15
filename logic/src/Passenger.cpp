@@ -78,17 +78,33 @@ void Passenger::boardPlane() {
 
 void Passenger::exitPlane() {
     // Implementacja logiki opuszczania samolotu przez pasażera
+    std::cout << "[Passenger " << passengerID << "] ";
+    std::cout << "is exiting the plane." << std::endl;
+
+    std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
 }
 
 void Passenger::proceedToTerminal() {
+    std::cout << "[Passenger " << passengerID << "] ";
+    std::cout << "is proceeding to the terminal." << std::endl;
+
+    std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
     // Implementacja logiki przejścia pasażera do terminalu
 }
 
 void Passenger::collectLuggage() {
+    std::cout << "[Passenger " << passengerID << "] ";
+    std::cout << "is collecting luggage." << std::endl;
+
+    std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
     // Implementacja logiki odbierania bagażu przez pasażera
 }
 
 void Passenger::leaveAirport() {
+    std::cout << "[Passenger " << passengerID << "] ";
+    std::cout << "is leaving the airport." << std::endl;
+
+    std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
     // Implementacja logiki opuszczania lotniska przez pasażera
 }
 
