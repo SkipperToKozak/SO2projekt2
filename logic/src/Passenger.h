@@ -27,6 +27,7 @@ class Passenger {
     Terminal &terminal;
     int passengerID = 0;
     int numberOf = 0;
+    int happiness = 100;
     int gateIndex = -1;
     std::string planeID = " ";
     PassengerStatus status = PassengerStatus::ArrivingAtAirport;
