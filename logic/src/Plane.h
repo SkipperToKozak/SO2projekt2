@@ -27,11 +27,9 @@ enum class PlaneStatus {
 class Airport;
 
 
-
 class Plane {
-
     std::mutex mutex;
-    Airport& airport;
+    Airport &airport;
     std::string flightNumber = "";
     int passengerLimit = 0;
     int passengersOnBoard = 0;
@@ -46,33 +44,40 @@ class Plane {
 
 
     void land();
+
     void disembarkPassengers();
+
     void refuel();
+
     void turnaroundCheck();
+
     void boardPassengers();
+
     void taxiing();
+
     void takeOff();
 
-
 public:
-    Plane(Airport& airport, std::string flightNumber, int passengersOnBoard, int passengerLimit, int currentFuel, int fuelCapacity)
-    : airport(airport), flightNumber(std::move(flightNumber)), passengerLimit(passengerLimit), passengersOnBoard(passengersOnBoard),
-      currentFuel(currentFuel), fuelCapacity(fuelCapacity) {
+    Plane(Airport &airport, int passengersOnBoard, int passengerLimit, int currentFuel, int fuelCapacity)
+        : airport(airport), passengerLimit(passengerLimit), passengersOnBoard(passengersOnBoard),
+          currentFuel(currentFuel), fuelCapacity(fuelCapacity) {
     }
-    //blokowanie kopiowania aby mutex mogł byc w klasie
-    Plane(const Plane&) = delete;
-    Plane& operator=(const Plane&) = delete;
 
-    Plane(Plane&& other) noexcept
-    : airport(other.airport), // Referencja — można tylko skopiować
-    flightNumber(std::move(other.flightNumber)),
-    passengerLimit(other.passengerLimit),
-    passengersOnBoard(other.passengersOnBoard),
-    currentFuel(other.currentFuel),
-    currentRunway(other.currentRunway),
-    fuelCapacity(other.fuelCapacity),
-    status(other.status),
-    ready(other.ready){
+    //blokowanie kopiowania aby mutex mogł byc w klasie
+    Plane(const Plane &) = delete;
+
+    Plane &operator=(const Plane &) = delete;
+
+    Plane(Plane &&other) noexcept
+        : airport(other.airport), // Referencja — można tylko skopiować
+          flightNumber(std::move(other.flightNumber)),
+          passengerLimit(other.passengerLimit),
+          passengersOnBoard(other.passengersOnBoard),
+          currentFuel(other.currentFuel),
+          currentRunway(other.currentRunway),
+          fuelCapacity(other.fuelCapacity),
+          status(other.status),
+          ready(other.ready) {
         // std::mutex i std::condition_variable nie są przenośne — pozostają domyślne
     }
 
@@ -90,7 +95,9 @@ public:
     //     return *this;
     // }
 
-    void run();
+    void initialize();
+
+    [[noreturn]] void run();
 
     [[nodiscard]] std::string getFlightNumber() const {
         return flightNumber;
@@ -111,9 +118,11 @@ public:
     [[nodiscard]] PlaneStatus getStatus() const {
         return status;
     }
+
     [[nodiscard]] int getGateIndex() const {
         return gateIndex;
     }
+
     void setGateIndex(int gateIndex) {
         this->gateIndex = gateIndex;
     }
@@ -124,17 +133,11 @@ public:
         for (int i = 0; i < 3; ++i) {
             id += 'A' + rand() % 26; // Random uppercase letter
         }
-        id+=" ";
-        id+=std::to_string((rand() % 900+100)); // Random number
+        id += " ";
+        id += std::to_string((rand() % 900 + 100)); // Random number
         return id;
     }
-
-
-
-
-
 };
-
 
 
 #endif //PLANE_H

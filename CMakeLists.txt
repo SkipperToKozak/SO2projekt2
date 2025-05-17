@@ -12,8 +12,8 @@ add_executable(SO2projekt2 main.cpp
         logic/src/Vehicle.h
         logic/src/Passenger.cpp
         logic/src/Passenger.h
-        logic/src/FlightControlTower.cpp
-        logic/src/FlightControlTower.h
+        logic/src/ATControlTower.cpp
+        logic/src/ATControlTower.h
         logic/src/resources/Hangar.cpp
         logic/src/resources/Hangar.h
         logic/src/resources/Gate.cpp

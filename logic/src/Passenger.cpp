@@ -22,6 +22,13 @@ void Passenger::runLeavingThePlane() {
 }
 
 
+void Passenger::run() {
+    while (true) {
+        runGettingOnAPlane();
+        runLeavingThePlane();
+    }
+}
+
 //Entering a plane
 void Passenger::arriveAtAirport() {
     std::cout << "[Passenger " << passengerID << "] ";

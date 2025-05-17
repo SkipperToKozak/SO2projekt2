@@ -23,7 +23,6 @@ enum class PassengerStatus {
 };
 
 class Passenger {
-
     Terminal &terminal;
     int passengerID = 0;
     int numberOf = 0;
@@ -34,35 +33,45 @@ class Passenger {
 
     //entering a plane
     void arriveAtAirport();
+
     void checkIn();
+
     void passSecurityCheck();
+
     void waitAtGate();
+
     void boardPlane();
 
     //leaving a plane
     void exitPlane();
+
     void proceedToTerminal();
+
     void collectLuggage();
+
     void leaveAirport();
 
 public:
-    Passenger(Terminal& terminal, std::string planeID, int passengerID ) : terminal(terminal), planeID(std::move(planeID)), passengerID(passengerID) {
+    Passenger(Terminal &terminal, std::string planeID, int passengerID) : terminal(terminal),
+                                                                          planeID(std::move(planeID)),
+                                                                          passengerID(passengerID) {
         numberOf = randInt(1, 10);
     }
 
-    explicit Passenger(Terminal& terminal): terminal(terminal) {
+    explicit Passenger(Terminal &terminal): terminal(terminal) {
         numberOf = randInt(1, 10);
     }
+
     [[nodiscard]] int getPassengerID() const {
         return passengerID;
     }
 
+    void run();
 
     void runGettingOnAPlane();
+
     void runLeavingThePlane();
-
 };
-
 
 
 #endif //PASSENGER_H

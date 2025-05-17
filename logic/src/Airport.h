@@ -9,7 +9,7 @@
 #include <mutex>
 #include <thread>
 
-#include "FlightControlTower.h"
+#include "ATControlTower.h"
 #include "Passenger.h"
 #include "Plane.h"
 
@@ -30,13 +30,12 @@
 
 using namespace std;
 
-class FlightControlTower;
+class ATControlTower;
 class Passenger;
 class Plane;
 class Runway;
 
 class Airport {
-
     vector<Plane> planes;
     int planesNumber = 0;
     vector<thread> planes_threads;
@@ -45,32 +44,37 @@ class Airport {
     int passengersNumber = 0;
     vector<thread> passengers_threads;
 
-    FlightControlTower flightControlTower;
-
-
-
+    ATControlTower atControlTower;
+    Terminal terminal;
 
 public:
-
     Airport()
-        : flightControlTower(NUM_RUNWAYS, NUM_GATES) { // Inicjalizacja flightControlTower
+        : atControlTower(*this, NUM_RUNWAYS), terminal(NUM_GATES) {
     }
 
-    vector<Passenger> *getPassengers() {
-        return &passengers;
+    vector<Passenger> &getPassengers() {
+        return passengers;
     }
 
-    FlightControlTower *getFlightControlTower() {
-        return &flightControlTower;
+    ATControlTower &getFlightControlTower() {
+        return atControlTower;
     };
+
+    Terminal &getTerminal() {
+        return terminal;
+    }
+
+
     void initialize();
+
     void run();
+
     void addPassengersGettingOnAPlane();
+
     void addPassengersLeavingThePlane();
+
     void addPlanes();
-
 };
-
 
 
 #endif //AIRPORT_H
