@@ -8,8 +8,6 @@ add_executable(SO2projekt2 main.cpp
         logic/src/Airport.h
         logic/src/Plane.cpp
         logic/src/Plane.h
-        logic/src/Vehicle.cpp
-        logic/src/Vehicle.h
         logic/src/Passenger.cpp
         logic/src/Passenger.h
         logic/src/ATControlTower.cpp
@@ -22,4 +20,12 @@ add_executable(SO2projekt2 main.cpp
         logic/src/Terminal.h
         logic/src/resources/Runway.cpp
         logic/src/resources/Runway.h
-        logic/src/utilities/randomise.h)
+        logic/src/utilities/randomise.h
+        logic/src/GroundServices.cpp
+        logic/src/GroundServices.h
+        logic/src/resources/Vehicle.cpp
+        logic/src/resources/Vehicle.h
+        logic/src/resources/RefuellingTruck.cpp
+        logic/src/resources/RefuellingTruck.h
+        logic/src/resources/TechnicalSupport.cpp
+        logic/src/resources/TechnicalSupport.h)
