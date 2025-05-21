@@ -27,6 +27,7 @@ void Plane::land() {
     } else {
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is waiting for landing." << std::endl;
+        status = PlaneStatus::Arriving;
         land();
     }
 }
@@ -107,12 +108,20 @@ void Plane::takeOff() {
     status = PlaneStatus::TakingOff;
     std::this_thread::sleep_for(std::chrono::seconds(12)); //TAKEOFF SET FOR 12s
     std::cout << "[Plane " << flightNumber << "] ";
-    std::cout << "Took off - currently in flight." << std::endl;
+    std::cout << "Took off" << std::endl;
     airport.getFlightControlTower().releaseRunway(*this);
+}
+
+void Plane::inFlight() {
+    cout << "[Plane " << flightNumber << "] ";
+    cout << "Plane is in flight." << endl;
+    status = PlaneStatus::InFlight;
+    std::this_thread::sleep_for(std::chrono::seconds(30)); //FLIGHT SET FOR 30s
 }
 
 
 [[noreturn]] void Plane::run() {
+    this_thread::sleep_for(chrono::seconds(startingDelay)); // Starting delay for the plane
     // Implement the logic for the plane's operations
     while (true) {
         initialize();
@@ -127,5 +136,12 @@ void Plane::takeOff() {
 }
 
 void Plane::initialize() {
-    flightNumber = randomFlightID();
+    string flightNumber_temp = randomFlightID();
+    if (flightNumber == "") {
+        if (!airport.isFlightNumberAvailable(flightNumber_temp)) {
+            initialize();
+        } else {
+            flightNumber = flightNumber_temp;
+        }
+    }
 }

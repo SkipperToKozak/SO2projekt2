@@ -26,7 +26,7 @@
 #define MAX_PLANE_FUEL_CAPACITY 1000
 #define MIN_PLANE_FUEL_CAPACITY 400
 // #define MIN_PLANE_FUEL_NEEDED 100
-
+#define STARTING_DELAY 30
 
 using namespace std;
 
@@ -51,6 +51,8 @@ public:
     Airport()
         : atControlTower(*this, NUM_RUNWAYS), terminal(NUM_GATES) {
     }
+
+    bool isFlightNumberAvailable(string flightNumber);
 
     vector<Passenger> &getPassengers() {
         return passengers;

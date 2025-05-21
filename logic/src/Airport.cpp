@@ -20,14 +20,13 @@ void Airport::initialize() {
 
     atControlTower.initialize();
 
-
     //Tworzenie pasażerów
     for (int i = 0; i < NUM_PASSENGERS; ++i) {
         passengers.emplace_back(terminal, Plane::randomFlightID(), ++passengersNumber);
     }
 
     //Tworzenie samolotów
-    for (int i = 0; i < NUM_PLANES; ++i) {
+    for (int i = 0; i < NUM_PLANES; i++) {
         string flightNumber = Plane::randomFlightID();
 
         // Sprawdzenie, czy numer lotu jest unikalny
@@ -38,13 +37,14 @@ void Airport::initialize() {
         }
 
         // Generowanie losowych danych dla samolotu
-        int passengerLimit = rand() % PLANE_PASSENGER_LIMIT + 1;
+        int passengerLimit = rand() % PLANE_PASSENGER_LIMIT + 10;
         int passengersOnBoard = rand() % passengerLimit + 1;
         int fuelCapacity = rand() % (MAX_PLANE_FUEL_CAPACITY - MIN_PLANE_FUEL_CAPACITY) + MIN_PLANE_FUEL_CAPACITY;
         int currentFuel = rand() % (fuelCapacity) + 1;
 
         //Przypisanie do samolotu lotniska
-        planes.emplace_back(*this, passengersOnBoard, passengerLimit, currentFuel, fuelCapacity);
+        planes.emplace_back(*this, flightNumber, passengersOnBoard, passengerLimit, currentFuel, fuelCapacity,
+                            i * STARTING_DELAY);
     }
 
 
@@ -77,6 +77,7 @@ void Airport::run() {
     }
     // addPassengersGettingOnAPlane();
 
+
     //Waiting for passengers' threads to finish
     for (auto &passengers_thread: passengers_threads) {
         passengers_thread.join();
@@ -85,6 +86,8 @@ void Airport::run() {
     }
     //Waiting for planes' threads to finish
     for (auto &planes_thread: planes_threads) {
+        cout << "[AIRPORT] ";
+        cout << "Plane thread is over." << endl;
         planes_thread.join();
     }
 
@@ -115,3 +118,15 @@ void Airport::addPlanes() {
     //     planes.emplace_back();
     // }
 }
+
+bool Airport::isFlightNumberAvailable(string flightNumber) {
+    for (auto &plane: planes) {
+        if (plane.getFlightNumber() == flightNumber) {
+            cout << plane.getFlightNumber() << endl;
+            cout << flightNumber << endl;
+            return false; // Flight number is not available
+        }
+    }
+    return true; // Flight number is available
+}
+

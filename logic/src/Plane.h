@@ -9,6 +9,8 @@
 #include <string>
 #include <utility>
 
+#include "utilities/randomise.h"
+
 
 enum class PlaneStatus {
     Arriving,
@@ -37,7 +39,8 @@ class Plane {
     int currentRunway = 0;
     int fuelCapacity = 0;
     int gateIndex = -1;
-    PlaneStatus status = PlaneStatus::Arriving;
+    PlaneStatus status = PlaneStatus::InFlight;
+    int startingDelay;
 
     bool ready;
     std::condition_variable cv;
@@ -57,10 +60,14 @@ class Plane {
 
     void takeOff();
 
+    void inFlight();
+
 public:
-    Plane(Airport &airport, int passengersOnBoard, int passengerLimit, int currentFuel, int fuelCapacity)
-        : airport(airport), passengerLimit(passengerLimit), passengersOnBoard(passengersOnBoard),
-          currentFuel(currentFuel), fuelCapacity(fuelCapacity) {
+    Plane(Airport &airport, std::string flightNumber, int passengersOnBoard, int passengerLimit, int currentFuel,
+          int fuelCapacity, int startingDelay)
+        : airport(airport), flightNumber(flightNumber), passengerLimit(passengerLimit),
+          passengersOnBoard(passengersOnBoard),
+          currentFuel(currentFuel), fuelCapacity(fuelCapacity), startingDelay(startingDelay) {
     }
 
     //blokowanie kopiowania aby mutex mogł byc w klasie
@@ -131,10 +138,10 @@ public:
     static std::string randomFlightID() {
         std::string id = "";
         for (int i = 0; i < 3; ++i) {
-            id += 'A' + rand() % 26; // Random uppercase letter
+            id += 'A' + randInt(0, 25); // Random uppercase letter
         }
         id += " ";
-        id += std::to_string((rand() % 900 + 100)); // Random number
+        id += std::to_string(randInt(100, 999)); // Random number
         return id;
     }
 };

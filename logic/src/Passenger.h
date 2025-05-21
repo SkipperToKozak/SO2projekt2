@@ -28,7 +28,7 @@ class Passenger {
     int numberOf = 0;
     int happiness = 100;
     int gateIndex = -1;
-    std::string planeID = " ";
+    std::string flightNumber = " ";
     PassengerStatus status = PassengerStatus::ArrivingAtAirport;
 
     //entering a plane
@@ -52,9 +52,9 @@ class Passenger {
     void leaveAirport();
 
 public:
-    Passenger(Terminal &terminal, std::string planeID, int passengerID) : terminal(terminal),
-                                                                          planeID(std::move(planeID)),
-                                                                          passengerID(passengerID) {
+    Passenger(Terminal &terminal, std::string flightNumber, int passengerID) : terminal(terminal),
+                                                                               flightNumber(std::move(flightNumber)),
+                                                                               passengerID(passengerID) {
         numberOf = randInt(1, 10);
     }
 
