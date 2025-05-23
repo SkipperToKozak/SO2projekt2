@@ -12,77 +12,97 @@
 #include <condition_variable>
 
 #include "Airport.h"
-#include "FlightControlTower.h"
-
+#include "ATControlTower.h"
 
 
 void Plane::land() {
     // Implement the logic for landing
-    std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
-    if (airport.getFlightControlTower()->requestLanding(*this)) {;
-        std::cout << "[Plane " << flightNumber <<"] ";
+    while (startingDelay > 0) {
+        this_thread::sleep_for(1s); // Starting delay for the plane
+        startingDelay--;
+        currentFuel -= 1;
+    }
+    startingDelay = randInt(2, 6);
+    if (airport.getFlightControlTower().requestLanding(*this)) {
+        startingDelay = 0;
+        std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is landing. " << std::endl;
         status = PlaneStatus::Landing;
-        std::this_thread::sleep_for(std::chrono::seconds(randInt(3, 8))); //LANDING SET FOR 10s
+        std::this_thread::sleep_for(std::chrono::seconds(randInt(20, 35))); //LANDING SET FOR 10s
     } else {
-        std::cout << "[Plane " << flightNumber <<"] ";
+        std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is waiting for landing." << std::endl;
-        land();
+        status = PlaneStatus::Arriving;
     }
-
 }
-void Plane::disembarkPassengers() {
 
-    if (airport.getFlightControlTower()->requestDisembarking(*this, gateIndex)) {
-        airport.getFlightControlTower()->releaseRunway(*this);
-        std::cout << "[Plane " << flightNumber <<"] ";
+void Plane::disembarkPassengers() {
+    if (airport.getFlightControlTower().requestDisembarking(*this, gateIndex)) {
+        std::cout << "[Plane " << flightNumber << "] ";
+        std::cout << "is taxiing to gate " << gateIndex << std::endl;
+        status = PlaneStatus::TaxiingFromRunway;
+        std::this_thread::sleep_for(std::chrono::seconds(randInt(5, 10))); //TAXIING SET FOR 10s
+        airport.getFlightControlTower().releaseRunway(*this);
+        std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is disembarking passengers." << std::endl;
         status = PlaneStatus::Disembarking;
         std::this_thread::sleep_for(std::chrono::seconds(randInt(3, 8))); //DISAMBARKING SET FOR 10s
     } else {
         //TODO mam wrazenie ze cos jest nie tak z czasem oczekiwania na koniec disembarkingu. Za dlugo to trwa, powinno kilka sekund (tylko gdy samolot nie uzyskal wczesniej gate'a)
-        std::cout << "[Plane " << flightNumber <<"] ";
+        std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is waiting for disembarkation." << std::endl;
         this_thread::sleep_for(std::chrono::seconds(15));
         disembarkPassengers();
     }
     // Implement the logic for disembarking passengers
     status = PlaneStatus::Disembarking;
-    std::this_thread::sleep_for( std::chrono::seconds(rand() % 3 + 10)); //DISEMBARKING SET FOR 10s
+    std::this_thread::sleep_for(std::chrono::seconds(rand() % 3 + 10)); //DISEMBARKING SET FOR 10s
 }
+
 void Plane::turnaroundCheck() {
-    std::cout << "[Plane " << flightNumber <<"] ";
+    std::cout << "[Plane " << flightNumber << "] ";
     // Implement the logic for disembarking passengers
     std::cout << "Turnaround check." << std::endl;
     status = PlaneStatus::TurnaroundCheck;
-    std::this_thread::sleep_for( std::chrono::seconds(rand() % 3 + 10)); //DISEMBARKING SET FOR 10s
-
+    std::this_thread::sleep_for(std::chrono::seconds(rand() % 3 + 10)); //DISEMBARKING SET FOR 10s
 }
+
 void Plane::refuel() {
-    std::cout << "[Plane " << flightNumber <<"] ";
+    status = PlaneStatus::Refueling;
+    std::cout << "[Plane " << flightNumber << "] ";
     // Implement the logic for refueling
     std::cout << "Refueling plane." << std::endl;
-    status = PlaneStatus::Refueling;
-    std::this_thread::sleep_for(std::chrono::seconds(20)); //REFUELING SET FOR 20s
-}
+    while (currentFuel < fuelCapacity) {
+        if (currentFuel + 20 > fuelCapacity) {
+            currentFuel = fuelCapacity;
+        } else {
+            currentFuel += 20;
+        }
+        this_thread::sleep_for(1s);
+        std::cout << "[Plane " << flightNumber << "] ";
+        std::cout << "Refueling plane. Current fuel: " << currentFuel << std::endl;
+    }
 
+    // std::this_thread::sleep_for(std::chrono::seconds(20)); //REFUELING SET FOR 20s
+}
 
 
 void Plane::boardPassengers() {
-    std::cout << "[Plane " << flightNumber <<"] ";
+    std::cout << "[Plane " << flightNumber << "] ";
     // Implement the logic for boarding passengers
     std::cout << "Boarding passengers." << std::endl;
     status = PlaneStatus::Boarding;
-    airport.getFlightControlTower()->requestBoarding(*this);
+    airport.getFlightControlTower().requestBoarding(*this);
 
     std::this_thread::sleep_for(std::chrono::seconds(30)); //BOARDING SET FOR 30s
     status = PlaneStatus::WaitingForRunway;
 }
+
 void Plane::taxiing() {
     std::cout << "[Plane " << flightNumber << "] ";
     std::cout << "Requesting runway." << std::endl;
 
-    if (airport.getFlightControlTower()->requestTaxiing(*this)) {
+    if (airport.getFlightControlTower().requestTaxiing(*this)) {
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "Heading to runway." << std::endl;
         status = PlaneStatus::TaxiingToRunway;
@@ -92,7 +112,7 @@ void Plane::taxiing() {
         // cv.wait(lock, [this] { return ready; });
         // ready = false;  // Resetuj flagę
         this_thread::sleep_for(std::chrono::seconds(5));
-        taxiing();      // Ponów próbę
+        taxiing(); // Ponów próbę
         return;
     }
 
@@ -101,23 +121,55 @@ void Plane::taxiing() {
 
 
 void Plane::takeOff() {
-    std::cout << "[Plane " << flightNumber <<"] ";
+    std::cout << "[Plane " << flightNumber << "] ";
     // Implement the logic for taking off
     std::cout << "Plane is taking off." << std::endl;
     status = PlaneStatus::TakingOff;
     std::this_thread::sleep_for(std::chrono::seconds(12)); //TAKEOFF SET FOR 12s
-    std::cout << "[Plane " << flightNumber <<"] ";
-    std::cout << "Took off - currently in flight." << std::endl;
-    airport.getFlightControlTower()->releaseRunway(*this);
+    std::cout << "[Plane " << flightNumber << "] ";
+    std::cout << "Took off" << std::endl;
+    airport.getFlightControlTower().releaseRunway(*this);
 }
-void Plane::run() {
+
+void Plane::inFlight() {
+    cout << "[Plane " << flightNumber << "] ";
+    cout << "Plane is in flight." << endl;
+    status = PlaneStatus::InFlight;
+    std::this_thread::sleep_for(std::chrono::seconds(30)); //FLIGHT SET FOR 30s
+}
+
+
+[[noreturn]] void Plane::run() {
+    // this_thread::sleep_for(chrono::seconds(startingDelay)); // Starting delay for the plane
     // Implement the logic for the plane's operations
-    srand(time(NULL));
-    land();
-    disembarkPassengers();
-    turnaroundCheck();
-    refuel();
-    boardPassengers();
-    taxiing();
-    takeOff();
+    while (true) {
+        while (startingDelay > 0) {
+            this_thread::sleep_for(1s); // Starting delay for the plane
+            startingDelay--;
+            currentFuel -= 1;
+        }
+        initialize();
+        while (status != PlaneStatus::Landing) {
+            land();
+        }
+        disembarkPassengers();
+        turnaroundCheck();
+        refuel();
+        boardPassengers();
+        taxiing();
+        takeOff();
+        inFlight();
+        startingDelay = 30;
+    }
+}
+
+void Plane::initialize() {
+    string flightNumber_temp = randomFlightID();
+    if (flightNumber == "") {
+        if (!airport.isFlightNumberAvailable(flightNumber_temp)) {
+            initialize();
+        } else {
+            flightNumber = flightNumber_temp;
+        }
+    }
 }

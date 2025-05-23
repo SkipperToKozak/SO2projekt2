@@ -9,34 +9,33 @@
 #include <mutex>
 #include <thread>
 
-#include "FlightControlTower.h"
+#include "ATControlTower.h"
 #include "Passenger.h"
 #include "Plane.h"
 
 //AIRPORT CONFIG
-#define NUM_RUNWAYS 3
+#define NUM_RUNWAYS 4
 #define NUM_HANGARS 5
 #define NUM_TERMINALS 2
-#define NUM_GATES 2
+#define NUM_GATES (NUM_RUNWAYS*3)
 #define NUM_PASSENGERS 10
-#define NUM_PLANES 3
+#define NUM_PLANES 10
 
 //PLANES INIT CONFIG
 #define PLANE_PASSENGER_LIMIT 20
 #define MAX_PLANE_FUEL_CAPACITY 1000
 #define MIN_PLANE_FUEL_CAPACITY 400
 // #define MIN_PLANE_FUEL_NEEDED 100
-
+#define STARTING_DELAY 30
 
 using namespace std;
 
-class FlightControlTower;
+class ATControlTower;
 class Passenger;
 class Plane;
 class Runway;
 
 class Airport {
-
     vector<Plane> planes;
     int planesNumber = 0;
     vector<thread> planes_threads;
@@ -45,32 +44,47 @@ class Airport {
     int passengersNumber = 0;
     vector<thread> passengers_threads;
 
-    FlightControlTower flightControlTower;
+    ATControlTower atControlTower;
+    Terminal terminal;
 
-
-
+    std::mutex passengersMutex;
 
 public:
-
     Airport()
-        : flightControlTower(NUM_RUNWAYS, NUM_GATES) { // Inicjalizacja flightControlTower
+        : atControlTower(*this, NUM_RUNWAYS), terminal(NUM_GATES) {
     }
 
-    vector<Passenger> *getPassengers() {
-        return &passengers;
+    bool isFlightNumberAvailable(string flightNumber);
+
+    vector<Passenger> &getPassengers() {
+        // std::lock_guard<std::mutex> lock(passengersMutex);
+        cout << "POBIERAM PASAZEROW" << endl;
+        return passengers;
     }
 
-    FlightControlTower *getFlightControlTower() {
-        return &flightControlTower;
+    vector<Plane> &getPlanes() {
+        return planes;
+    }
+
+    ATControlTower &getFlightControlTower() {
+        return atControlTower;
     };
+
+    Terminal &getTerminal() {
+        return terminal;
+    }
+
+
     void initialize();
+
     void run();
+
     void addPassengersGettingOnAPlane();
-    void addPassengersLeavingThePlane();
+
+    void addPassengersLeavingThePlane(int size);
+
     void addPlanes();
-
 };
-
 
 
 #endif //AIRPORT_H

@@ -51,7 +51,7 @@ public:
         for (auto &gate: gates) {
             if (gate.getCurrentPlaneId() == planeId) {
                 gate.releaseGate();
-                gate.setGateClosedForPassengers();
+                gate.setGateClosedForEnteringPassengers();
                 break; // Przerywamy po znalezieniu odpowiedniego gate'a
             }
         }
@@ -65,7 +65,7 @@ public:
     void setGateOpenedForPassengers(std::string planeId) {
         for (auto &gate: gates) {
             if (gate.getCurrentPlaneId() == planeId) {
-                gate.setGateOpenedForPassengers();
+                gate.setGateOpenedForEnteringPassengers();
                 break; // Przerywamy po znalezieniu odpowiedniego gate'a
             }
         }
@@ -73,11 +73,11 @@ public:
 
     void setGateClosedForPassengers(int gateIndex) {
         std::lock_guard<std::mutex> lock(mutex);
-        gates[gateIndex].setGateClosedForPassengers();
+        gates[gateIndex].setGateClosedForEnteringPassengers();
     }
 
     bool isGateOpenedForPassengers(int &gateIndex, int passengerID) {
-        std::lock_guard<std::mutex> lock(mutex);
+        // std::lock_guard<std::mutex> lock(mutex);
         for (auto &gate: gates) {
             if (gate.isGateAvailableForEnteringPassengers()) {
                 gateIndex = gate.getIndex();
@@ -89,14 +89,18 @@ public:
         return false;
     }
 
-    bool goThroughGate(int passengerSize) {
+    bool goThroughGate(int passengerSize, std::string &flightNumber) {
         std::lock_guard<std::mutex> lock(mutex);
         for (auto &gate: gates) {
             if (gate.isGateAvailableForEnteringPassengers()) {
-                return gate.enterThroughGate(passengerSize);;
+                return gate.enterThroughGate(passengerSize, flightNumber);;
             }
         }
         return false;
+    }
+
+    std::vector<Gate> &getGates() {
+        return gates;
     }
 };
 

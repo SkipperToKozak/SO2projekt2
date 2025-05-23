@@ -9,6 +9,8 @@
 #include <string>
 #include <utility>
 
+#include "utilities/randomise.h"
+
 
 enum class PlaneStatus {
     Arriving,
@@ -24,14 +26,29 @@ enum class PlaneStatus {
     InFlight
 };
 
+inline std::string toString(PlaneStatus status) {
+    switch (status) {
+        case PlaneStatus::Arriving: return "Arriving";
+        case PlaneStatus::Landing: return "Landing";
+        case PlaneStatus::TaxiingFromRunway: return "TaxiingFromRunway";
+        case PlaneStatus::Disembarking: return "Disembarking";
+        case PlaneStatus::TurnaroundCheck: return "TurnaroundCheck";
+        case PlaneStatus::Refueling: return "Refueling";
+        case PlaneStatus::Boarding: return "Boarding";
+        case PlaneStatus::WaitingForRunway: return "WaitingForRunway";
+        case PlaneStatus::TaxiingToRunway: return "TaxiingToRunway";
+        case PlaneStatus::TakingOff: return "TakingOff";
+        case PlaneStatus::InFlight: return "InFlight";
+        default: return "Unknown";
+    }
+}
+
 class Airport;
 
 
-
 class Plane {
-
     std::mutex mutex;
-    Airport& airport;
+    Airport &airport;
     std::string flightNumber = "";
     int passengerLimit = 0;
     int passengersOnBoard = 0;
@@ -39,40 +56,53 @@ class Plane {
     int currentRunway = 0;
     int fuelCapacity = 0;
     int gateIndex = -1;
-    PlaneStatus status = PlaneStatus::Arriving;
+    PlaneStatus status = PlaneStatus::InFlight;
+    int startingDelay;
 
     bool ready;
     std::condition_variable cv;
 
 
     void land();
+
     void disembarkPassengers();
+
     void refuel();
+
     void turnaroundCheck();
+
     void boardPassengers();
+
     void taxiing();
+
     void takeOff();
 
+    void inFlight();
 
 public:
-    Plane(Airport& airport, std::string flightNumber, int passengersOnBoard, int passengerLimit, int currentFuel, int fuelCapacity)
-    : airport(airport), flightNumber(std::move(flightNumber)), passengerLimit(passengerLimit), passengersOnBoard(passengersOnBoard),
-      currentFuel(currentFuel), fuelCapacity(fuelCapacity) {
+    Plane(Airport &airport, std::string flightNumber, int passengersOnBoard, int passengerLimit, int currentFuel,
+          int fuelCapacity, int startingDelay)
+        : airport(airport), flightNumber(flightNumber), passengerLimit(passengerLimit),
+          passengersOnBoard(passengersOnBoard),
+          currentFuel(currentFuel), fuelCapacity(fuelCapacity), startingDelay(startingDelay) {
     }
-    //blokowanie kopiowania aby mutex mogł byc w klasie
-    Plane(const Plane&) = delete;
-    Plane& operator=(const Plane&) = delete;
 
-    Plane(Plane&& other) noexcept
-    : airport(other.airport), // Referencja — można tylko skopiować
-    flightNumber(std::move(other.flightNumber)),
-    passengerLimit(other.passengerLimit),
-    passengersOnBoard(other.passengersOnBoard),
-    currentFuel(other.currentFuel),
-    currentRunway(other.currentRunway),
-    fuelCapacity(other.fuelCapacity),
-    status(other.status),
-    ready(other.ready){
+    //blokowanie kopiowania aby mutex mogł byc w klasie
+    Plane(const Plane &) = delete;
+
+    Plane &operator=(const Plane &) = delete;
+
+    Plane(Plane &&other) noexcept
+        : airport(other.airport), // Referencja — można tylko skopiować
+          flightNumber(std::move(other.flightNumber)),
+          passengerLimit(other.passengerLimit),
+          passengersOnBoard(other.passengersOnBoard),
+          currentFuel(other.currentFuel),
+          currentRunway(other.currentRunway),
+          fuelCapacity(other.fuelCapacity),
+          status(other.status),
+          startingDelay(other.startingDelay),
+          ready(other.ready) {
         // std::mutex i std::condition_variable nie są przenośne — pozostają domyślne
     }
 
@@ -90,7 +120,9 @@ public:
     //     return *this;
     // }
 
-    void run();
+    void initialize();
+
+    [[noreturn]] void run();
 
     [[nodiscard]] std::string getFlightNumber() const {
         return flightNumber;
@@ -108,33 +140,49 @@ public:
         return currentFuel;
     }
 
+    [[nodiscard]] int getCurrentFuel() const {
+        return currentFuel;
+    }
+
+    [[nodiscard]] int getFuelCapacity() const {
+        return fuelCapacity;
+    }
+
+    [[nodiscard]] int getCurrentRunway() const {
+        return currentRunway;
+    }
+
     [[nodiscard]] PlaneStatus getStatus() const {
         return status;
     }
+
+    std::string getStatusString() const {
+        return toString(status);
+    }
+
     [[nodiscard]] int getGateIndex() const {
         return gateIndex;
     }
+
     void setGateIndex(int gateIndex) {
         this->gateIndex = gateIndex;
+    }
+
+    int getStartingDelay() const {
+        return startingDelay;
     }
 
 
     static std::string randomFlightID() {
         std::string id = "";
         for (int i = 0; i < 3; ++i) {
-            id += 'A' + rand() % 26; // Random uppercase letter
+            id += 'A' + randInt(0, 25); // Random uppercase letter
         }
-        id+=" ";
-        id+=std::to_string((rand() % 900+100)); // Random number
+        id += " ";
+        id += std::to_string(randInt(100, 999)); // Random number
         return id;
     }
-
-
-
-
-
 };
-
 
 
 #endif //PLANE_H
