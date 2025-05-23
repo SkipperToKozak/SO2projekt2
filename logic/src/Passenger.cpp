@@ -37,7 +37,7 @@ void Passenger::run() {
 void Passenger::arriveAtAirport() {
     std::cout << "[Passenger " << passengerID << "] ";
     std::cout << "is arriving at the airport." << std::endl;
-    status = PassengerStatus::ArrivingAtAirport; //TODO ZMIANA
+    status = PassengerStatus::ArrivingAtAirport;
     // Implementacja logiki przybycia pasażera na lotnisko
     std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
 }
