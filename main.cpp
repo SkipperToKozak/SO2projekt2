@@ -32,7 +32,11 @@ int main(int argc, char *argv[]) {
     // Wywołaj display w głównym wątku
     view.display();
     controller.getRunwaysInfo();
-
+    while (true) {
+        this_thread::sleep_for(6500ms);
+        cout << controller.getPassengersInfo().at(1).statusText << endl;
+        this_thread::sleep_for(500ms);
+    }
     // Po zakończeniu display dołącz wątek
     if (airportThread.joinable())
         airportThread.join();

@@ -78,6 +78,16 @@ public:
         numberOf = randInt(1, 10);
     }
 
+    // Passenger(Passenger &&other) noexcept
+    //     : terminal(other.terminal),
+    //       passengerID(other.passengerID),
+    //       numberOf(other.numberOf),
+    //       happiness(other.happiness),
+    //       gateIndex(other.gateIndex),
+    //       flightNumber(std::move(other.flightNumber)),
+    //       status(other.status) {
+    // }
+
     [[nodiscard]] int getPassengerID() const {
         return passengerID;
     }

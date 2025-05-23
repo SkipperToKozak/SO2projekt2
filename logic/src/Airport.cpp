@@ -99,37 +99,30 @@ void Airport::run() {
 void Airport::addPassengersGettingOnAPlane() {
     int chance = 100;
     while (true) {
-        if (passengers.size() < NUM_PASSENGERS) {
-            int randomVal = randInt(1, 100);
-            if (randomVal + chance < 90) {
-                if ((float(passengers.size()) / NUM_PASSENGERS) < 0.5) {
-                    chance += 20;
-                } else chance += 5;
-                this_thread::sleep_for(5s);
-            } else if (randomVal > 90) {
-                chance = 0;
-                passengers.emplace_back(terminal, Plane::randomFlightID(), ++passengersNumber);
-                passengers_threads.emplace_back(&Passenger::runGettingOnAPlane, &passengers.back());
-            }
-        }
+        // this_thread::sleep_for(1s);
+        // // std::lock_guard<std::mutex> lock(passengersMutex);
+        // if (passengersNumber < NUM_PASSENGERS) {
+        //     // int randomVal = randInt(1, 100);
+        //     // if (randomVal + chance < 90) {
+        //     //     if ((float(passengers.size()) / NUM_PASSENGERS) < 0.5) {
+        //     //         chance += 20;
+        //     //     } else chance += 5;
+        //     //     this_thread::sleep_for(5s);
+        //     // } else if (randomVal > 90) {
+        //     //     chance = 0;
+        //     passengers.emplace_back(terminal, Plane::randomFlightID(), passengersNumber++);
+        //     passengers_threads.emplace_back(&Passenger::run, ref(passengers.back()));
+        //     // cout << "PASAZEROWIE GENERATOR " << passengers[0].getPassengerStatusString() << endl;
+        //
+        //     // }
+        // }
     }
     for (thread &t: passengers_threads) {
         t.join();
     }
 }
 
-void Airport::addPassengersLeavingThePlane() {
-    int lastPassengerIndex = 0;
-    if (!passengers.empty()) {
-        lastPassengerIndex = passengers.size() - 1;
-    } else {
-        cout << "[AIRPORT] ";
-        cout << "Airport passenger list is empty." << endl;
-    }
-    for (int i = 0; i < NUM_PASSENGERS; ++i) {
-        passengers.emplace_back(terminal, Plane::randomFlightID(), ++passengersNumber);
-        passengers_threads.emplace_back(&Passenger::runLeavingThePlane, &passengers[i + lastPassengerIndex]);
-    }
+void Airport::addPassengersLeavingThePlane(int size) {
 }
 
 void Airport::addPlanes() {

@@ -158,6 +158,7 @@ void Plane::inFlight() {
         boardPassengers();
         taxiing();
         takeOff();
+        inFlight();
         startingDelay = 30;
     }
 }

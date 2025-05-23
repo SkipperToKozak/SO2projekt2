@@ -24,19 +24,20 @@ void Passenger::runLeavingThePlane() {
 
 
 void Passenger::run() {
-    while (true) {
-        happiness = 100;
-        flightNumber = " ";
-        runGettingOnAPlane();
-        // runLeavingThePlane();
-    }
+    // while (true) {
+    status = PassengerStatus::ExitingPlane;
+    happiness = 100;
+    flightNumber = " ";
+    runGettingOnAPlane();
+    // runLeavingThePlane();
+    // }
 }
 
 //Entering a plane
 void Passenger::arriveAtAirport() {
     std::cout << "[Passenger " << passengerID << "] ";
     std::cout << "is arriving at the airport." << std::endl;
-    status = PassengerStatus::ArrivingAtAirport;
+    status = PassengerStatus::ArrivingAtAirport; //TODO ZMIANA
     // Implementacja logiki przybycia pasażera na lotnisko
     std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
 }

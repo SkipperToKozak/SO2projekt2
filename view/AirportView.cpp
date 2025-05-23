@@ -97,7 +97,7 @@ void drawGateBox(GateBox b) {
 void drawRunwayBox(RunwayBox b) {
     WINDOW *win = newwin(b.height, b.width, b.y, b.x);
     box(win, 0, 0);
-    mvwprintw(win, 0, 2, "%s %d", b.title, b.content[0].sizeT);
+    mvwprintw(win, 0, 2, "%s %d", b.title, b.content.size());
     for (int i = 0; i < b.content.size(); i++) {
         if (i < b.height - 2) {
             if (b.content[i].statusText == "Available") {

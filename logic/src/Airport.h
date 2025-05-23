@@ -18,7 +18,7 @@
 #define NUM_HANGARS 5
 #define NUM_TERMINALS 2
 #define NUM_GATES (NUM_RUNWAYS*3)
-#define NUM_PASSENGERS 30
+#define NUM_PASSENGERS 10
 #define NUM_PLANES 10
 
 //PLANES INIT CONFIG
@@ -47,6 +47,8 @@ class Airport {
     ATControlTower atControlTower;
     Terminal terminal;
 
+    std::mutex passengersMutex;
+
 public:
     Airport()
         : atControlTower(*this, NUM_RUNWAYS), terminal(NUM_GATES) {
@@ -55,6 +57,8 @@ public:
     bool isFlightNumberAvailable(string flightNumber);
 
     vector<Passenger> &getPassengers() {
+        // std::lock_guard<std::mutex> lock(passengersMutex);
+        cout << "POBIERAM PASAZEROW" << endl;
         return passengers;
     }
 
@@ -77,7 +81,7 @@ public:
 
     void addPassengersGettingOnAPlane();
 
-    void addPassengersLeavingThePlane();
+    void addPassengersLeavingThePlane(int size);
 
     void addPlanes();
 };
