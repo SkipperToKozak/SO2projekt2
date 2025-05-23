@@ -26,6 +26,23 @@ enum class PlaneStatus {
     InFlight
 };
 
+inline std::string toString(PlaneStatus status) {
+    switch (status) {
+        case PlaneStatus::Arriving: return "Arriving";
+        case PlaneStatus::Landing: return "Landing";
+        case PlaneStatus::TaxiingFromRunway: return "TaxiingFromRunway";
+        case PlaneStatus::Disembarking: return "Disembarking";
+        case PlaneStatus::TurnaroundCheck: return "TurnaroundCheck";
+        case PlaneStatus::Refueling: return "Refueling";
+        case PlaneStatus::Boarding: return "Boarding";
+        case PlaneStatus::WaitingForRunway: return "WaitingForRunway";
+        case PlaneStatus::TaxiingToRunway: return "TaxiingToRunway";
+        case PlaneStatus::TakingOff: return "TakingOff";
+        case PlaneStatus::InFlight: return "InFlight";
+        default: return "Unknown";
+    }
+}
+
 class Airport;
 
 
@@ -122,8 +139,24 @@ public:
         return currentFuel;
     }
 
+    [[nodiscard]] int getCurrentFuel() const {
+        return currentFuel;
+    }
+
+    [[nodiscard]] int getFuelCapacity() const {
+        return fuelCapacity;
+    }
+
+    [[nodiscard]] int getCurrentRunway() const {
+        return currentRunway;
+    }
+
     [[nodiscard]] PlaneStatus getStatus() const {
         return status;
+    }
+
+    std::string getStatusString() const {
+        return toString(status);
     }
 
     [[nodiscard]] int getGateIndex() const {

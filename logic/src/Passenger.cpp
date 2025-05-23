@@ -11,7 +11,7 @@ void Passenger::runGettingOnAPlane() {
     checkIn();
     passSecurityCheck();
     waitAtGate();
-    boardPlane();
+    if (status != PassengerStatus::OnBoard) waitAtGate();
 }
 
 void Passenger::runLeavingThePlane() {
@@ -25,7 +25,7 @@ void Passenger::runLeavingThePlane() {
 void Passenger::run() {
     while (true) {
         runGettingOnAPlane();
-        runLeavingThePlane();
+        // runLeavingThePlane();
     }
 }
 
@@ -65,17 +65,22 @@ void Passenger::waitAtGate() {
             happiness -= 10;
         }
         waitAtGate();
-    }
+    } else boardPlane();
 }
 
 void Passenger::boardPlane() {
     status = PassengerStatus::Boarding;
+    std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
     if (terminal.goThroughGate(numberOf)) {
+        status = PassengerStatus::OnBoard;
         //przechodzenie przez bramke, jesli brak miejsc to sie odbija
         // Implementacja logiki wchodzenia pasażera do samolotu
         std::cout << "[Passenger " << passengerID << "] ";
         std::cout << "is boarding the plane." << std::endl;
     } else {
+        if (happiness > 0) {
+            happiness -= 10;
+        }
         std::cout << "[Passenger " << passengerID << "] ";
         std::cout << "did not go through the gate " << gateIndex << std::endl;
     }

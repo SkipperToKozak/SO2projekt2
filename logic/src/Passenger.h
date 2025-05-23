@@ -16,18 +16,33 @@ enum class PassengerStatus {
     SecurityCheck,
     WaitingAtGate,
     Boarding,
+    OnBoard,
     // InFlight,
     ExitingPlane,
     Disembarked,
     Leaving
 };
 
+inline std::string toString(PassengerStatus status) {
+    switch (status) {
+        case PassengerStatus::ArrivingAtAirport: return "ArrivingAtAirport";
+        case PassengerStatus::CheckingIn: return "CheckingIn";
+        case PassengerStatus::SecurityCheck: return "SecurityCheck";
+        case PassengerStatus::WaitingAtGate: return "WaitingAtGate";
+        case PassengerStatus::Boarding: return "Boarding";
+        case PassengerStatus::ExitingPlane: return "ExitingPlane";
+        case PassengerStatus::Disembarked: return "Disembarked";
+        case PassengerStatus::Leaving: return "Leaving";
+        default: return "Unknown";
+    }
+}
+
 class Passenger {
     Terminal &terminal;
     int passengerID = 0;
     int numberOf = 0;
     int happiness = 100;
-    int gateIndex = -1;
+    int gateIndex = 1;
     std::string flightNumber = " ";
     PassengerStatus status = PassengerStatus::ArrivingAtAirport;
 
@@ -71,6 +86,34 @@ public:
     void runGettingOnAPlane();
 
     void runLeavingThePlane();
+
+    std::string getFlightNumber() const {
+        return flightNumber;
+    };
+
+    std::string getPassengerStatusString() const {
+        return toString(status);
+    }
+
+    PassengerStatus getPassengerStatus() const {
+        return status;
+    }
+
+    int getGateIndex() const {
+        return gateIndex;
+    }
+
+    void setGateIndex(int gateeIndex) {
+        gateIndex = gateeIndex;
+    }
+
+    int getHappiness() const {
+        return happiness;
+    }
+
+    int getNumberOf() const {
+        return numberOf;
+    }
 };
 
 

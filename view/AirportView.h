@@ -13,11 +13,14 @@
 
 class AirportView {
 public:
-    AirportView() = default;
+    AirportView(AirportController &controller) : airportController(controller) {
+    };
 
     void display();
 
-    AirportController airportController;
+    AirportController &airportController;
+
+private:
 
 public:
     // void show();

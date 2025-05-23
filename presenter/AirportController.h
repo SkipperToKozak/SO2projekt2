@@ -11,13 +11,53 @@
 // #include "src/Airport.h"
 // #include "AirportView.h"
 
+struct PlaneViewModel {
+    std::string flightNumber;
+    std::string statusText;
+    int passengerLimit;
+    int passengersOnBoard;
+    int currentFuel;
+    int fuelCapacity;
+    int currentRunway;
+    int gateIndex;
+};
+
+struct PassengerViewModel {
+    int passengerID;
+    int gateIndex;
+    int happiness;
+    int numberOf;
+    std::string flightNumber;
+    std::string statusText;
+};
+
+struct RunwayViewModel {
+    int runwayID;
+    std::string statusText;
+};
+
+struct GateViewModel {
+    int gateID;
+    int limit;
+    std::string currentPlaneId;
+    std::string statusText;
+};
+
 class AirportController {
 public:
     AirportController() {
         airport.initialize();
-        airport.run();
     };
     Airport airport;
+
+    vector<PlaneViewModel> getPlanesInfo();
+
+    vector<PassengerViewModel> getPassengersInfo();
+
+    vector<GateViewModel> getGatesInfo();
+
+    vector<RunwayViewModel> getRunwaysInfo();
+
     // AirportView &view;
 
 public:

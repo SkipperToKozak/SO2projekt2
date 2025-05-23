@@ -58,6 +58,10 @@ public:
         return passengers;
     }
 
+    vector<Plane> &getPlanes() {
+        return planes;
+    }
+
     ATControlTower &getFlightControlTower() {
         return atControlTower;
     };

@@ -18,7 +18,7 @@ class Gate {
     bool isAvailableForEnteringPassengers = false;
     bool isAvailableForExitingPassengers = false;
     mutable std::mutex mutex; //mutable aby modyfikowac w constach
-    std::string currentPlaneId;
+    std::string currentPlaneId = " ";
 
 public:
     Gate(int index)
@@ -86,14 +86,34 @@ public:
         return isAvailableForEnteringPassengers;
     }
 
-    void setGateOpenedForPassengers() {
+    void setGateOpenedForEnteringPassengers() {
         std::lock_guard<std::mutex> lock(mutex);
         isAvailableForEnteringPassengers = true;
     }
 
-    void setGateClosedForPassengers() {
+    void setGateClosedForEnteringPassengers() {
         std::lock_guard<std::mutex> lock(mutex);
         isAvailableForEnteringPassengers = false;
+    }
+
+    bool isGateAvailableForExitingPassengers() const {
+        std::lock_guard<std::mutex> lock(mutex);
+        return isAvailableForExitingPassengers;
+    }
+
+    void setGateOpenedForExitingPassengers() {
+        std::lock_guard<std::mutex> lock(mutex);
+        isAvailableForExitingPassengers = true;
+    }
+
+    void setGateClosedForExitingPassengers() {
+        std::lock_guard<std::mutex> lock(mutex);
+        isAvailableForExitingPassengers = false;
+    }
+
+    int getLimit() const {
+        std::lock_guard<std::mutex> lock(mutex);
+        return limit;
     }
 
     bool enterThroughGate(int passengerSize) {
