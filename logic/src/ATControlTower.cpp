@@ -22,6 +22,16 @@ bool ATControlTower::requestLanding(Plane &plane) {
     if (requestRunwayAvailability(plane, runwayIndex)) {
         std::cout << fctTag;
         std::cout << "Plane " << plane.getFlightNumber() << " is landing on runway " << runwayIndex << std::endl;
+        // for (auto &plane_temp: airport.getPlanes()) {
+        //     // if (float(plane_temp.getCurrentFuel()) / float((plane_temp.getFuelCapacity()) < 0.3)) {
+        //     //     // //sprawdza czy istnieje samolot z mala iloscia paliwa
+        //     //     // if (plane.getFlightNumber() == plane_temp.getFlightNumber()) {
+        //     //     //     //jesli to ten co prosi o zgode na ladowanie to sie zgadza
+        //     //     //     return true;
+        //     //     // }
+        //     //     return false;
+        //     // }
+        // }
         return true;
     }
     // If no runway is available, inform the plane

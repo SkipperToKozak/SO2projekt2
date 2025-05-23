@@ -89,11 +89,11 @@ public:
         return false;
     }
 
-    bool goThroughGate(int passengerSize) {
+    bool goThroughGate(int passengerSize, std::string &flightNumber) {
         std::lock_guard<std::mutex> lock(mutex);
         for (auto &gate: gates) {
             if (gate.isGateAvailableForEnteringPassengers()) {
-                return gate.enterThroughGate(passengerSize);;
+                return gate.enterThroughGate(passengerSize, flightNumber);;
             }
         }
         return false;

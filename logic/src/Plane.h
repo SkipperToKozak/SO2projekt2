@@ -101,6 +101,7 @@ public:
           currentRunway(other.currentRunway),
           fuelCapacity(other.fuelCapacity),
           status(other.status),
+          startingDelay(other.startingDelay),
           ready(other.ready) {
         // std::mutex i std::condition_variable nie są przenośne — pozostają domyślne
     }
@@ -165,6 +166,10 @@ public:
 
     void setGateIndex(int gateIndex) {
         this->gateIndex = gateIndex;
+    }
+
+    int getStartingDelay() const {
+        return startingDelay;
     }
 
 

@@ -20,8 +20,8 @@ void Airport::initialize() {
 
     atControlTower.initialize();
 
-    //Tworzenie pasażerów
-    for (int i = 0; i < NUM_PASSENGERS; ++i) {
+    // //Tworzenie pasażerów
+    for (int i = 0; i < NUM_PASSENGERS; i++) {
         passengers.emplace_back(terminal, Plane::randomFlightID(), ++passengersNumber);
     }
 
@@ -40,11 +40,11 @@ void Airport::initialize() {
         int passengerLimit = rand() % PLANE_PASSENGER_LIMIT + 10;
         int passengersOnBoard = rand() % passengerLimit + 1;
         int fuelCapacity = rand() % (MAX_PLANE_FUEL_CAPACITY - MIN_PLANE_FUEL_CAPACITY) + MIN_PLANE_FUEL_CAPACITY;
-        int currentFuel = rand() % (fuelCapacity) + 1;
+        int currentFuel = rand() % (fuelCapacity - int(0.3 * fuelCapacity) - 1) + int(0.3 * fuelCapacity);
 
         //Przypisanie do samolotu lotniska
         planes.emplace_back(*this, flightNumber, passengersOnBoard, passengerLimit, currentFuel, fuelCapacity,
-                            i * STARTING_DELAY);
+                            i * STARTING_DELAY + 1);
     }
 
 
@@ -58,7 +58,7 @@ void Airport::run() {
 
     // Simulate boarding and disembarking passengers
 
-
+    // thread passengerGenEnteringThread = thread(&Airport::addPassengersGettingOnAPlane, this);
     // for (auto& passenger : passengers) {
     //     passenger.board();
     //     std::cout << "Passenger is boarding." << std::endl;
@@ -69,7 +69,7 @@ void Airport::run() {
         this_thread::sleep_for(10ms); // Sleep for 100 milliseconds to simulate staggered start
         std::cout << "Plane " << plane.getFlightNumber() << " is running." << std::endl;
     }
-    //Launching passengers' threads
+    // Launching passengers' threads
     for (auto &passenger: passengers) {
         passengers_threads.emplace_back(&Passenger::run, &passenger);
         this_thread::sleep_for(10ms); // Sleep for 100 milliseconds to simulate staggered start
@@ -77,6 +77,8 @@ void Airport::run() {
     }
     // addPassengersGettingOnAPlane();
 
+
+    // passengerGenEnteringThread.join();
 
     //Waiting for passengers' threads to finish
     for (auto &passengers_thread: passengers_threads) {
@@ -95,8 +97,25 @@ void Airport::run() {
 }
 
 void Airport::addPassengersGettingOnAPlane() {
-    passengers.emplace_back(terminal, Plane::randomFlightID(), ++passengersNumber);
-    passengers_threads.emplace_back(&Passenger::runGettingOnAPlane, &passengers.back());
+    int chance = 100;
+    while (true) {
+        if (passengers.size() < NUM_PASSENGERS) {
+            int randomVal = randInt(1, 100);
+            if (randomVal + chance < 90) {
+                if ((float(passengers.size()) / NUM_PASSENGERS) < 0.5) {
+                    chance += 20;
+                } else chance += 5;
+                this_thread::sleep_for(5s);
+            } else if (randomVal > 90) {
+                chance = 0;
+                passengers.emplace_back(terminal, Plane::randomFlightID(), ++passengersNumber);
+                passengers_threads.emplace_back(&Passenger::runGettingOnAPlane, &passengers.back());
+            }
+        }
+    }
+    for (thread &t: passengers_threads) {
+        t.join();
+    }
 }
 
 void Airport::addPassengersLeavingThePlane() {

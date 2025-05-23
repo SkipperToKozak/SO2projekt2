@@ -17,23 +17,31 @@
 
 void Plane::land() {
     // Implement the logic for landing
-    std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
+    while (startingDelay > 0) {
+        this_thread::sleep_for(1s); // Starting delay for the plane
+        startingDelay--;
+        currentFuel -= 1;
+    }
+    startingDelay = randInt(2, 6);
     if (airport.getFlightControlTower().requestLanding(*this)) {
-        ;
+        startingDelay = 0;
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is landing. " << std::endl;
         status = PlaneStatus::Landing;
-        std::this_thread::sleep_for(std::chrono::seconds(randInt(3, 8))); //LANDING SET FOR 10s
+        std::this_thread::sleep_for(std::chrono::seconds(randInt(20, 35))); //LANDING SET FOR 10s
     } else {
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is waiting for landing." << std::endl;
         status = PlaneStatus::Arriving;
-        land();
     }
 }
 
 void Plane::disembarkPassengers() {
     if (airport.getFlightControlTower().requestDisembarking(*this, gateIndex)) {
+        std::cout << "[Plane " << flightNumber << "] ";
+        std::cout << "is taxiing to gate " << gateIndex << std::endl;
+        status = PlaneStatus::TaxiingFromRunway;
+        std::this_thread::sleep_for(std::chrono::seconds(randInt(5, 10))); //TAXIING SET FOR 10s
         airport.getFlightControlTower().releaseRunway(*this);
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is disembarking passengers." << std::endl;
@@ -60,11 +68,22 @@ void Plane::turnaroundCheck() {
 }
 
 void Plane::refuel() {
+    status = PlaneStatus::Refueling;
     std::cout << "[Plane " << flightNumber << "] ";
     // Implement the logic for refueling
     std::cout << "Refueling plane." << std::endl;
-    status = PlaneStatus::Refueling;
-    std::this_thread::sleep_for(std::chrono::seconds(20)); //REFUELING SET FOR 20s
+    while (currentFuel < fuelCapacity) {
+        if (currentFuel + 20 > fuelCapacity) {
+            currentFuel = fuelCapacity;
+        } else {
+            currentFuel += 20;
+        }
+        this_thread::sleep_for(1s);
+        std::cout << "[Plane " << flightNumber << "] ";
+        std::cout << "Refueling plane. Current fuel: " << currentFuel << std::endl;
+    }
+
+    // std::this_thread::sleep_for(std::chrono::seconds(20)); //REFUELING SET FOR 20s
 }
 
 
@@ -121,17 +140,25 @@ void Plane::inFlight() {
 
 
 [[noreturn]] void Plane::run() {
-    this_thread::sleep_for(chrono::seconds(startingDelay)); // Starting delay for the plane
+    // this_thread::sleep_for(chrono::seconds(startingDelay)); // Starting delay for the plane
     // Implement the logic for the plane's operations
     while (true) {
+        while (startingDelay > 0) {
+            this_thread::sleep_for(1s); // Starting delay for the plane
+            startingDelay--;
+            currentFuel -= 1;
+        }
         initialize();
-        land();
+        while (status != PlaneStatus::Landing) {
+            land();
+        }
         disembarkPassengers();
         turnaroundCheck();
         refuel();
         boardPassengers();
         taxiing();
         takeOff();
+        startingDelay = 30;
     }
 }
 

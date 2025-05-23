@@ -30,6 +30,12 @@ typedef struct {
     vector<GateViewModel> content;
 } GateBox;
 
+typedef struct {
+    int x, y, width, height;
+    char title[32];
+    vector<RunwayViewModel> content;
+} RunwayBox;
+
 void drawPlaneBox(PlaneBox b) {
     WINDOW *win = newwin(b.height, b.width, b.y, b.x);
 
@@ -39,9 +45,10 @@ void drawPlaneBox(PlaneBox b) {
     mvwprintw(win, 0, 2, "%s", b.title);
     for (int i = 0; i < b.content.size(); i++) {
         if (i < b.height - 2) {
-            mvwprintw(win, i + 1, 1, "%s Passengers %d/%d  Fuel %d/%d Status %s", (b.content[i].flightNumber).c_str(),
+            mvwprintw(win, i + 1, 1, "%s Passengers %2d/%2d  Fuel %d/%d %s %d", (b.content[i].flightNumber).c_str(),
                       b.content[i].passengersOnBoard, b.content[i].passengerLimit,
-                      b.content[i].currentFuel, b.content[i].fuelCapacity, (b.content[i].statusText).c_str());
+                      b.content[i].currentFuel, b.content[i].fuelCapacity, (b.content[i].statusText).c_str(),
+                      b.content[i].startingDelay);
         }
     }
     wattroff(win, COLOR_PAIR(1));
@@ -87,6 +94,24 @@ void drawGateBox(GateBox b) {
     delwin(win); // ważne, by nie zostawiać "śmieci" w pamięci
 }
 
+void drawRunwayBox(RunwayBox b) {
+    WINDOW *win = newwin(b.height, b.width, b.y, b.x);
+    box(win, 0, 0);
+    mvwprintw(win, 0, 2, "%s %d", b.title, b.content[0].sizeT);
+    for (int i = 0; i < b.content.size(); i++) {
+        if (i < b.height - 2) {
+            if (b.content[i].statusText == "Available") {
+                wattron(win, COLOR_PAIR(1));
+            } else {
+                wattron(win, COLOR_PAIR(2));
+            }
+            mvwprintw(win, i + 1, 1, "ID: %2d %s", b.content[i].runwayID, b.content[i].statusText.c_str());
+        }
+    }
+    wrefresh(win);
+    delwin(win); // ważne, by nie zostawiać "śmieci" w pamięci
+}
+
 void AirportView::display() {
     initscr();
     noecho();
@@ -126,11 +151,17 @@ void AirportView::display() {
         //TODO STAŁE WARTOŚCI SZER I WYS
         PlaneBox planes = {WIDTH + 4, 1, WIDTH, HEIGHT, "Samoloty", airportController.getPlanesInfo()};
 
-        GateBox gates = {2 * WIDTH + 4, 1, WIDTH, HEIGHT, "Bramy", airportController.getGatesInfo()};
+        GateBox gates = {2 * WIDTH + 6, 1, WIDTH - 10, HEIGHT, "Bramy", airportController.getGatesInfo()};
+
+        RunwayBox runway = {
+            3 * WIDTH + 8, 1, WIDTH - 10, HEIGHT, "Pas startowy", airportController.getRunwaysInfo()
+        };
 
         drawPassengerBox(passengers);
         drawPlaneBox(planes);
         drawGateBox(gates);
+        drawRunwayBox(runway);
+
 
         // Górny rząd: statusy samolotów
         // for (int i = 0; i < 6; i++) {

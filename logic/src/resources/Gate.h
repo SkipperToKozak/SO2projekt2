@@ -31,7 +31,7 @@ public:
     Gate &operator=(const Gate &) = delete;
 
     ~Gate() {
-        std::cout << "Destruktor: " << index << std::endl;
+        // std::cout << "Destruktor: " << index << std::endl;
     }
 
 
@@ -116,11 +116,13 @@ public:
         return limit;
     }
 
-    bool enterThroughGate(int passengerSize) {
+    bool enterThroughGate(int passengerSize, std::string &flightNumber) {
+        std::lock_guard<std::mutex> lock(mutex);
         if (limit < passengerSize) {
             return false;
         }
         limit -= passengerSize;
+        flightNumber = currentPlaneId;
         return true;
     }
 };

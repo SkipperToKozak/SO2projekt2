@@ -10,8 +10,9 @@ void Passenger::runGettingOnAPlane() {
     arriveAtAirport();
     checkIn();
     passSecurityCheck();
-    waitAtGate();
-    if (status != PassengerStatus::OnBoard) waitAtGate();
+    while (status != PassengerStatus::OnBoard) {
+        waitAtGate();
+    }
 }
 
 void Passenger::runLeavingThePlane() {
@@ -24,6 +25,8 @@ void Passenger::runLeavingThePlane() {
 
 void Passenger::run() {
     while (true) {
+        happiness = 100;
+        flightNumber = " ";
         runGettingOnAPlane();
         // runLeavingThePlane();
     }
@@ -65,13 +68,13 @@ void Passenger::waitAtGate() {
             happiness -= 10;
         }
         waitAtGate();
-    } else boardPlane();
+    } else boardPlane(flightNumber);
 }
 
-void Passenger::boardPlane() {
+void Passenger::boardPlane(std::string &flightNumber) {
     status = PassengerStatus::Boarding;
     std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
-    if (terminal.goThroughGate(numberOf)) {
+    if (terminal.goThroughGate(numberOf, flightNumber)) {
         status = PassengerStatus::OnBoard;
         //przechodzenie przez bramke, jesli brak miejsc to sie odbija
         // Implementacja logiki wchodzenia pasażera do samolotu

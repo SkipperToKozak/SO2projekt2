@@ -31,6 +31,7 @@ int main(int argc, char *argv[]) {
 
     // Wywołaj display w głównym wątku
     view.display();
+    controller.getRunwaysInfo();
 
     // Po zakończeniu display dołącz wątek
     if (airportThread.joinable())

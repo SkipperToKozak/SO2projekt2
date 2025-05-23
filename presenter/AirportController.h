@@ -20,6 +20,7 @@ struct PlaneViewModel {
     int fuelCapacity;
     int currentRunway;
     int gateIndex;
+    int startingDelay;
 };
 
 struct PassengerViewModel {
@@ -33,6 +34,7 @@ struct PassengerViewModel {
 
 struct RunwayViewModel {
     int runwayID;
+    int sizeT;
     std::string statusText;
 };
 

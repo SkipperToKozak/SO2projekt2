@@ -30,6 +30,7 @@ inline std::string toString(PassengerStatus status) {
         case PassengerStatus::SecurityCheck: return "SecurityCheck";
         case PassengerStatus::WaitingAtGate: return "WaitingAtGate";
         case PassengerStatus::Boarding: return "Boarding";
+        case PassengerStatus::OnBoard: return "OnBoard";
         case PassengerStatus::ExitingPlane: return "ExitingPlane";
         case PassengerStatus::Disembarked: return "Disembarked";
         case PassengerStatus::Leaving: return "Leaving";
@@ -55,7 +56,7 @@ class Passenger {
 
     void waitAtGate();
 
-    void boardPlane();
+    void boardPlane(std::string &flightNumber);
 
     //leaving a plane
     void exitPlane();
@@ -68,7 +69,7 @@ class Passenger {
 
 public:
     Passenger(Terminal &terminal, std::string flightNumber, int passengerID) : terminal(terminal),
-                                                                               flightNumber(std::move(flightNumber)),
+                                                                               flightNumber("TEMP"),
                                                                                passengerID(passengerID) {
         numberOf = randInt(1, 10);
     }

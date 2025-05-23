@@ -16,6 +16,7 @@ vector<PlaneViewModel> AirportController::getPlanesInfo() {
         planeViewModel.fuelCapacity = plane.getFuelCapacity();
         planeViewModel.currentRunway = plane.getCurrentRunway();
         planeViewModel.gateIndex = plane.getGateIndex();
+        planeViewModel.startingDelay = plane.getStartingDelay();
         planeViewModel.statusText = plane.getStatusString();
         planeViewVec.push_back(planeViewModel);
     }
@@ -47,9 +48,9 @@ vector<GateViewModel> AirportController::getGatesInfo() {
         if (gate.isGateAvailableForPlanes())
             gateViewModel.statusText = "Planes";
         else if (gate.isGateAvailableForEnteringPassengers())
-            gateViewModel.statusText = "Entering Passengers";
+            gateViewModel.statusText = "Entering";
         else if (gate.isGateAvailableForExitingPassengers())
-            gateViewModel.statusText = "Exiting Passengers";
+            gateViewModel.statusText = "Exiting";
         else
             gateViewModel.statusText = "None";
         gateViewModel.currentPlaneId = gate.getCurrentPlaneId();
@@ -57,5 +58,24 @@ vector<GateViewModel> AirportController::getGatesInfo() {
         gateViewVec.push_back(gateViewModel);
     }
     return gateViewVec;
+}
+
+vector<RunwayViewModel> AirportController::getRunwaysInfo() {
+    std::lock_guard<std::mutex> lock(mutex);
+    vector<RunwayViewModel> runwayViewVec;
+    cout << "[AIRPORT CONTROLLER] ";
+    cout << "Getting runways info ";
+    cout << airport.getFlightControlTower().getRunways().size() << endl;
+    for (const auto &runway: airport.getFlightControlTower().getRunways()) {
+        RunwayViewModel runwayViewModel;
+        runwayViewModel.runwayID = runway.getIndex();
+        // runwayViewModel.sizeT = airport.getFlightControlTower().getRunways().size();
+        if (runway.isRunwayAvailable())
+            runwayViewModel.statusText = "Available";
+        else
+            runwayViewModel.statusText = "Occupied";
+        runwayViewVec.push_back(runwayViewModel);
+    }
+    return runwayViewVec;
 }
 

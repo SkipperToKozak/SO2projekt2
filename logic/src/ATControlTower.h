@@ -20,9 +20,10 @@ class ATControlTower {
 public:
     ATControlTower(Airport &airport, int numRunways)
         : airport(airport), numRunways(numRunways) {
-        for (int i = 0; i < numRunways; ++i) {
-            runways.emplace_back(i);
-        }
+        // for (int i = 0; i < numRunways; i++) {
+        //     runways.emplace_back(i);
+        //     std::cout << "[AT CONTROL TOWER] Runway " << i << " initialized." << std::endl;
+        // }
     }
 
 
@@ -45,6 +46,10 @@ public:
     bool requestRunwayAvailability(Plane &plane, int &runwayIndex);
 
     bool requestTaxiing(Plane &plane);
+
+    const std::vector<Runway> &getRunways() {
+        return runways;
+    }
 };
 
 
