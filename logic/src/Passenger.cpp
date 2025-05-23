@@ -13,6 +13,8 @@ void Passenger::runGettingOnAPlane() {
     while (status != PassengerStatus::OnBoard) {
         waitAtGate();
     }
+    std::cout << "[Passenger " << passengerID << "]  skonczylem";
+    isFinished = true;
 }
 
 void Passenger::runLeavingThePlane() {

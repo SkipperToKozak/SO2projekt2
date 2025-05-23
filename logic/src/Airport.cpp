@@ -21,9 +21,9 @@ void Airport::initialize() {
     atControlTower.initialize();
 
     // //Tworzenie pasażerów
-    for (int i = 0; i < NUM_PASSENGERS; i++) {
-        passengers.emplace_back(terminal, Plane::randomFlightID(), ++passengersNumber);
-    }
+    // for (int i = 0; i < NUM_PASSENGERS; i++) {
+    //     passengers.emplace_back(terminal, Plane::randomFlightID(), ++passengersNumber);
+    // }
 
     //Tworzenie samolotów
     for (int i = 0; i < NUM_PLANES; i++) {
@@ -58,71 +58,109 @@ void Airport::run() {
 
     // Simulate boarding and disembarking passengers
 
-    // thread passengerGenEnteringThread = thread(&Airport::addPassengersGettingOnAPlane, this);
+    thread passengerGenEnteringThread = thread(&Airport::addPassengersGettingOnAPlane, this);
+    thread cleanerThread = thread(&Airport::cleanupFinishedPassengers, this);
     // for (auto& passenger : passengers) {
     //     passenger.board();
     //     std::cout << "Passenger is boarding." << std::endl;
     // }
-    //Laubching planes' threads
+    //Launching planes' threads
     for (auto &plane: planes) {
         planes_threads.emplace_back(&Plane::run, &plane);
         this_thread::sleep_for(10ms); // Sleep for 100 milliseconds to simulate staggered start
         std::cout << "Plane " << plane.getFlightNumber() << " is running." << std::endl;
     }
     // Launching passengers' threads
-    for (auto &passenger: passengers) {
-        passengers_threads.emplace_back(&Passenger::run, &passenger);
-        this_thread::sleep_for(10ms); // Sleep for 100 milliseconds to simulate staggered start
-        std::cout << "Passenger " << passenger.getPassengerID() << " is running." << std::endl;
-    }
+    // for (auto &passenger: passengers) {
+    //     passengers_threads.emplace_back(&Passenger::run, &passenger);
+    //     this_thread::sleep_for(10ms); // Sleep for 100 milliseconds to simulate staggered start
+    //     std::cout << "Passenger " << passenger.getPassengerID() << " is running." << std::endl;
+    // }
     // addPassengersGettingOnAPlane();
 
+    // addPassengersLeavingThePlane(5);
 
-    // passengerGenEnteringThread.join();
 
+    // cleanupFinishedPassengers();
     //Waiting for passengers' threads to finish
     for (auto &passengers_thread: passengers_threads) {
-        passengers_thread.join();
-        cout << "[AIRPORT] ";
+        if (passengers_thread.joinable()) passengers_thread.join();
+
+        cout << "[AIRPORT-CLEANER] ";
         cout << "Passenger thread is over." << endl;
     }
     //Waiting for planes' threads to finish
     for (auto &planes_thread: planes_threads) {
-        cout << "[AIRPORT] ";
+        cout << "[AIRPORT-CLEANER] ";
         cout << "Plane thread is over." << endl;
         planes_thread.join();
     }
+    cleanerThread.join();
+    passengerGenEnteringThread.join();
 
     std::cout << "Airport simulation ended." << std::endl;
 }
 
-void Airport::addPassengersGettingOnAPlane() {
-    int chance = 100;
+void Airport::cleanupFinishedPassengers() {
     while (true) {
-        // this_thread::sleep_for(1s);
-        // // std::lock_guard<std::mutex> lock(passengersMutex);
-        // if (passengersNumber < NUM_PASSENGERS) {
-        //     // int randomVal = randInt(1, 100);
-        //     // if (randomVal + chance < 90) {
-        //     //     if ((float(passengers.size()) / NUM_PASSENGERS) < 0.5) {
-        //     //         chance += 20;
-        //     //     } else chance += 5;
-        //     //     this_thread::sleep_for(5s);
-        //     // } else if (randomVal > 90) {
-        //     //     chance = 0;
-        //     passengers.emplace_back(terminal, Plane::randomFlightID(), passengersNumber++);
-        //     passengers_threads.emplace_back(&Passenger::run, ref(passengers.back()));
-        //     // cout << "PASAZEROWIE GENERATOR " << passengers[0].getPassengerStatusString() << endl;
-        //
-        //     // }
-        // }
+        this_thread::sleep_for(1s); {
+            std::lock_guard<std::mutex> lock(passengersMutex);
+            std::cout << "Calling cleanup" << std::endl;
+            auto pit = passengers.begin();
+            auto tit = passengers_threads.begin();
+            while (pit != passengers.end() && tit != passengers_threads.end()) {
+                if (pit->getPassengerFinished() && tit->joinable()) {
+                    tit->join();
+                    tit = passengers_threads.erase(tit);
+                    pit = passengers.erase(pit);
+                    std::cout << "[CLEANUP] Passenger zakończył i został usunięty.\n";
+                } else {
+                    ++pit;
+                    ++tit;
+                }
+            }
+        }
     }
-    for (thread &t: passengers_threads) {
-        t.join();
+}
+
+void Airport::addPassengersGettingOnAPlane() {
+    while (true) {
+        this_thread::sleep_for(1s); {
+            std::lock_guard<std::mutex> lock(passengersMutex);
+            if (passengers.size() < NUM_PASSENGERS) {
+                // 1) wstawiamy nowego pasażera na koniec deque
+                passengers.emplace_back(terminal, Plane::randomFlightID(), ++passengersNumber);
+
+                // 2) bierzemy referencję do tego obiektu
+                Passenger &p = passengers.back();
+
+                // 3) tworzymy wątek, który wywoła metodę run() na tym obiekcie
+                passengers_threads.emplace_back(&Passenger::run, &p);
+
+                // (opcjonalnie) mała przerwa, żeby starty były „rozsiane”
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                std::cout << "[AIRPORT] Passenger " << p.getPassengerID() << " started." << std::endl;
+            }
+        }
     }
 }
 
 void Airport::addPassengersLeavingThePlane(int size) {
+    std::lock_guard<std::mutex> lock(passengersMutex);
+    for (int i = 0; i < size; ++i) {
+        // 1) wstawiamy nowego pasażera na koniec deque
+        passengers.emplace_back(terminal, Plane::randomFlightID(), ++passengersNumber);
+
+        // 2) bierzemy referencję do tego obiektu
+        Passenger &p = passengers.back();
+
+        // 3) tworzymy wątek, który wywoła metodę run() na tym obiekcie
+        passengers_threads.emplace_back(&Passenger::run, &p);
+
+        // (opcjonalnie) mała przerwa, żeby starty były „rozsiane”
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::cout << "[AIRPORT] Passenger " << p.getPassengerID() << " started." << std::endl;
+    }
 }
 
 void Airport::addPlanes() {

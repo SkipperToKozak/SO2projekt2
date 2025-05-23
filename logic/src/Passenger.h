@@ -40,6 +40,7 @@ inline std::string toString(PassengerStatus status) {
 
 class Passenger {
     Terminal &terminal;
+    std::atomic<bool> isFinished = false;
     int passengerID = 0;
     int numberOf = 0;
     int happiness = 100;
@@ -77,6 +78,7 @@ public:
     explicit Passenger(Terminal &terminal): terminal(terminal) {
         numberOf = randInt(1, 10);
     }
+
 
     // Passenger(Passenger &&other) noexcept
     //     : terminal(other.terminal),
@@ -124,6 +126,10 @@ public:
 
     int getNumberOf() const {
         return numberOf;
+    }
+
+    bool getPassengerFinished() const {
+        return isFinished;
     }
 };
 

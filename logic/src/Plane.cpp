@@ -28,7 +28,7 @@ void Plane::land() {
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is landing. " << std::endl;
         status = PlaneStatus::Landing;
-        std::this_thread::sleep_for(std::chrono::seconds(randInt(20, 35))); //LANDING SET FOR 10s
+        std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 3))); //LANDING SET FOR 25-35 s
     } else {
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is waiting for landing." << std::endl;
@@ -74,6 +74,7 @@ void Plane::refuel() {
     std::cout << "Refueling plane." << std::endl;
     while (currentFuel < fuelCapacity) {
         if (currentFuel + 20 > fuelCapacity) {
+            //todo zmiana
             currentFuel = fuelCapacity;
         } else {
             currentFuel += 20;

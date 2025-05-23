@@ -5,6 +5,8 @@
 #ifndef AIRPORT_H
 #define AIRPORT_H
 
+#include <deque>
+#include <list>
 #include <vector>
 #include <mutex>
 #include <thread>
@@ -40,7 +42,7 @@ class Airport {
     int planesNumber = 0;
     vector<thread> planes_threads;
 
-    vector<Passenger> passengers;
+    list<Passenger> passengers;
     int passengersNumber = 0;
     vector<thread> passengers_threads;
 
@@ -56,7 +58,7 @@ public:
 
     bool isFlightNumberAvailable(string flightNumber);
 
-    vector<Passenger> &getPassengers() {
+    list<Passenger> &getPassengers() {
         // std::lock_guard<std::mutex> lock(passengersMutex);
         cout << "POBIERAM PASAZEROW" << endl;
         return passengers;
@@ -78,6 +80,8 @@ public:
     void initialize();
 
     void run();
+
+    void cleanupFinishedPassengers();
 
     void addPassengersGettingOnAPlane();
 

@@ -8,6 +8,8 @@
 #include <string.h>
 
 #include "AirportView.h"
+#include "AirportController.h"
+#include <thread>
 
 // #include "logic/src/Airport.h"
 typedef struct {
@@ -19,9 +21,7 @@ typedef struct {
 
 int main(int argc, char *argv[]) {
     srand(time(NULL));
-#include "presenter/AirportController.h"
-#include "view/AirportView.h"
-#include <thread>
+
 
     AirportController controller;
     AirportView view(controller);
@@ -32,11 +32,11 @@ int main(int argc, char *argv[]) {
     // Wywołaj display w głównym wątku
     view.display();
     controller.getRunwaysInfo();
-    while (true) {
-        this_thread::sleep_for(6500ms);
-        cout << controller.getPassengersInfo().at(1).statusText << endl;
-        this_thread::sleep_for(500ms);
-    }
+    // while (true) {
+    //     this_thread::sleep_for(6500ms);
+    //     cout << controller.getPassengersInfo().at(1).statusText << endl;
+    //     this_thread::sleep_for(500ms);
+    // }
     // Po zakończeniu display dołącz wątek
     if (airportThread.joinable())
         airportThread.join();
