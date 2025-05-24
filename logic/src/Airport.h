@@ -20,7 +20,7 @@
 #define NUM_HANGARS 5
 #define NUM_TERMINALS 2
 #define NUM_GATES (NUM_RUNWAYS*3)
-#define NUM_PASSENGERS 10
+#define NUM_PASSENGERS 15
 #define NUM_PLANES 10
 
 //PLANES INIT CONFIG
@@ -53,7 +53,7 @@ class Airport {
 
 public:
     Airport()
-        : atControlTower(*this, NUM_RUNWAYS), terminal(NUM_GATES) {
+        : atControlTower(*this, NUM_RUNWAYS), terminal(*this, NUM_GATES) {
     }
 
     bool isFlightNumberAvailable(string flightNumber);
@@ -85,7 +85,7 @@ public:
 
     void addPassengersGettingOnAPlane();
 
-    void addPassengersLeavingThePlane(int size);
+    void addPassengersLeavingThePlane(int &size);
 
     void addPlanes();
 };

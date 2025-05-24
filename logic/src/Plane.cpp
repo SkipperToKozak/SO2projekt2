@@ -37,7 +37,7 @@ void Plane::land() {
 }
 
 void Plane::disembarkPassengers() {
-    if (airport.getFlightControlTower().requestDisembarking(*this, gateIndex)) {
+    if (airport.getFlightControlTower().requestTaxiingFromRunway(*this, gateIndex)) {
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is taxiing to gate " << gateIndex << std::endl;
         status = PlaneStatus::TaxiingFromRunway;
@@ -45,6 +45,8 @@ void Plane::disembarkPassengers() {
         airport.getFlightControlTower().releaseRunway(*this);
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is disembarking passengers." << std::endl;
+        airport.getTerminal().startDisembarkation(passengersOnBoard);
+        airport.getTerminal().setGateOpenedForExitingPassengers(gateIndex);
         status = PlaneStatus::Disembarking;
         std::this_thread::sleep_for(std::chrono::seconds(randInt(3, 8))); //DISAMBARKING SET FOR 10s
     } else {
@@ -55,7 +57,6 @@ void Plane::disembarkPassengers() {
         disembarkPassengers();
     }
     // Implement the logic for disembarking passengers
-    status = PlaneStatus::Disembarking;
     std::this_thread::sleep_for(std::chrono::seconds(rand() % 3 + 10)); //DISEMBARKING SET FOR 10s
 }
 

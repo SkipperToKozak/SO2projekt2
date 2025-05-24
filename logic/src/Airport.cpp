@@ -145,20 +145,29 @@ void Airport::addPassengersGettingOnAPlane() {
     }
 }
 
-void Airport::addPassengersLeavingThePlane(int size) {
+void Airport::addPassengersLeavingThePlane(int &size) {
     std::lock_guard<std::mutex> lock(passengersMutex);
-    for (int i = 0; i < size; ++i) {
+    while (size > 0) {
+        int psize;
+        if (size > 10) {
+            //TODO zahrdcodowany max na grupa pasazerow = 10
+            psize = randInt(1, 10);
+        } else {
+            psize = randInt(1, size);
+        }
+        size -= psize;
+
         // 1) wstawiamy nowego pasażera na koniec deque
-        passengers.emplace_back(terminal, Plane::randomFlightID(), ++passengersNumber);
+        passengers.emplace_back(terminal, ++passengersNumber, psize);
 
         // 2) bierzemy referencję do tego obiektu
         Passenger &p = passengers.back();
 
         // 3) tworzymy wątek, który wywoła metodę run() na tym obiekcie
-        passengers_threads.emplace_back(&Passenger::run, &p);
+        passengers_threads.emplace_back(&Passenger::runLeavingThePlane, &p);
 
         // (opcjonalnie) mała przerwa, żeby starty były „rozsiane”
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(1s);
         std::cout << "[AIRPORT] Passenger " << p.getPassengerID() << " started." << std::endl;
     }
 }

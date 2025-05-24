@@ -22,12 +22,12 @@ void Passenger::runLeavingThePlane() {
     proceedToTerminal();
     collectLuggage();
     leaveAirport();
+    isFinished = true;
 }
 
 
 void Passenger::run() {
     // while (true) {
-    status = PassengerStatus::ExitingPlane;
     happiness = 100;
     flightNumber = " ";
     runGettingOnAPlane();
@@ -95,34 +95,38 @@ void Passenger::boardPlane(std::string &flightNumber) {
 //Leaving a plane
 
 void Passenger::exitPlane() {
-    // Implementacja logiki opuszczania samolotu przez pasażera
+    // Implementacja logiki ouszczania samolotu przez pasażera
+    status = PassengerStatus::ExitingPlane;
     std::cout << "[Passenger " << passengerID << "] ";
     std::cout << "is exiting the plane." << std::endl;
 
-    std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
+    std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
 }
 
 void Passenger::proceedToTerminal() {
+    status = PassengerStatus::Disembarked;
     std::cout << "[Passenger " << passengerID << "] ";
     std::cout << "is proceeding to the terminal." << std::endl;
 
-    std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
+    std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
     // Implementacja logiki przejścia pasażera do terminalu
 }
 
 void Passenger::collectLuggage() {
+    status = PassengerStatus::CollectingLuggage;
     std::cout << "[Passenger " << passengerID << "] ";
     std::cout << "is collecting luggage." << std::endl;
 
-    std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
+    std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
     // Implementacja logiki odbierania bagażu przez pasażera
 }
 
 void Passenger::leaveAirport() {
+    status = PassengerStatus::Leaving;
     std::cout << "[Passenger " << passengerID << "] ";
     std::cout << "is leaving the airport." << std::endl;
 
-    std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
+    std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
     // Implementacja logiki opuszczania lotniska przez pasażera
 }
 

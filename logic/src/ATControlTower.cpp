@@ -41,7 +41,7 @@ bool ATControlTower::requestLanding(Plane &plane) {
 }
 
 
-bool ATControlTower::requestDisembarking(Plane &plane, int &gateIndex) {
+bool ATControlTower::requestTaxiingFromRunway(Plane &plane, int &gateIndex) {
     Gate *gate = airport.getTerminal().assignGate(plane.getFlightNumber(), plane.getPassengerLimit());
     //Check if gate is null
     if (gate == nullptr) {

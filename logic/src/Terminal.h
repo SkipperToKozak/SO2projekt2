@@ -15,11 +15,12 @@
 inline std::string terminalTag = "[AT TERMINAL] "; //air traffic control tower tag
 
 class Terminal {
+    Airport &airport;
     std::vector<Gate> gates;
     mutable std::mutex mutex;
 
 public:
-    explicit Terminal(int numGates) {
+    explicit Terminal(Airport &airport, int numGates): airport(airport) {
         for (int i = 0; i < numGates; ++i) {
             gates.emplace_back(i);
         }
@@ -98,6 +99,10 @@ public:
         }
         return false;
     }
+
+    void startDisembarkation(int &numOfPassengers);
+
+    void setGateOpenedForExitingPassengers(int gateIndex);
 
     std::vector<Gate> &getGates() {
         return gates;

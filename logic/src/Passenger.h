@@ -20,6 +20,7 @@ enum class PassengerStatus {
     // InFlight,
     ExitingPlane,
     Disembarked,
+    CollectingLuggage,
     Leaving
 };
 
@@ -33,6 +34,7 @@ inline std::string toString(PassengerStatus status) {
         case PassengerStatus::OnBoard: return "OnBoard";
         case PassengerStatus::ExitingPlane: return "ExitingPlane";
         case PassengerStatus::Disembarked: return "Disembarked";
+        case PassengerStatus::CollectingLuggage: return "CollectingLuggage";
         case PassengerStatus::Leaving: return "Leaving";
         default: return "Unknown";
     }
@@ -75,8 +77,8 @@ public:
         numberOf = randInt(1, 10);
     }
 
-    explicit Passenger(Terminal &terminal): terminal(terminal) {
-        numberOf = randInt(1, 10);
+    explicit Passenger(Terminal &terminal, int passengerID, int numberOf): terminal(terminal), numberOf(numberOf),
+                                                                           passengerID(passengerID) {
     }
 
 
