@@ -6,6 +6,8 @@
 #include <iostream>
 #include <thread>
 
+#include "utilities/FileUtils.h"
+
 void Passenger::runGettingOnAPlane() {
     arriveAtAirport();
     checkIn();
@@ -14,6 +16,7 @@ void Passenger::runGettingOnAPlane() {
         waitAtGate();
     }
     std::cout << "[Passenger " << passengerID << "]  skonczylem";
+    FileUtils::saveToFile(std::to_string(passengerID) + ";" + std::to_string(happiness));
     isFinished = true;
 }
 

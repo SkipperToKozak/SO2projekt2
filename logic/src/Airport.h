@@ -14,6 +14,7 @@
 #include "ATControlTower.h"
 #include "Passenger.h"
 #include "Plane.h"
+#include "utilities/Config.h"
 
 //AIRPORT CONFIG
 #define NUM_RUNWAYS 4
@@ -42,6 +43,7 @@ class Airport {
     int planesNumber = 0;
     vector<thread> planes_threads;
 
+
     list<Passenger> passengers;
     int passengersNumber = 0;
     vector<thread> passengers_threads;
@@ -52,8 +54,9 @@ class Airport {
     std::mutex passengersMutex;
 
 public:
-    Airport()
-        : atControlTower(*this, NUM_RUNWAYS), terminal(*this, NUM_GATES) {
+    Airport(Config config)
+        : atControlTower(*this, stoi(config.getValue("RUNWAYS"))),
+          terminal(*this, stoi(config.getValue("RUNWAYS")) * 3) {
     }
 
     bool isFlightNumberAvailable(string flightNumber);

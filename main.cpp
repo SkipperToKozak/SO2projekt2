@@ -21,9 +21,10 @@ typedef struct {
 
 int main(int argc, char *argv[]) {
     srand(time(NULL));
+    Config config;
 
 
-    AirportController controller;
+    AirportController controller = AirportController(std::move(config));
     AirportView view(controller);
 
     // Uruchom Airport::run w osobnym wątku

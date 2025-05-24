@@ -11,14 +11,14 @@
 
 class Config {
 private:
-    std::string filePath;
+    std::string filePath = "config.cfg"; // Ścieżka do pliku konfiguracyjnego
     std::map<std::string, std::string> configData;
 
     void createDefaultConfig() {
         std::ofstream configFile(filePath);
         if (configFile.is_open()) {
-            configFile << "setting1=default_value1\n";
-            configFile << "setting2=default_value2\n";
+            configFile << "RUNWAYS=4\n";
+            configFile << "PASSENGERS=15\n";
             configFile.close();
         } else {
             throw std::runtime_error("Nie można utworzyć pliku konfiguracyjnego.");
@@ -44,7 +44,7 @@ private:
     }
 
 public:
-    explicit Config(const std::string &path) : filePath(path) {
+    Config() {
         std::ifstream configFile(filePath);
         if (!configFile.good()) {
             createDefaultConfig();

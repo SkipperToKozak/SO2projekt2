@@ -57,8 +57,8 @@ add_executable(SO2projekt2
         view/AirportView.cpp
         view/AirportView.h
         logic/src/utilities/timer.h
-        logic/src/utilities/Config.cpp
         logic/src/utilities/Config.h
+        logic/src/utilities/FileUtils.h
 )
 target_link_libraries(SO2projekt2 pdcurses)
 # Linkowanie bibliotek SFML
