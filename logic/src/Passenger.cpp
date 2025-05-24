@@ -16,7 +16,8 @@ void Passenger::runGettingOnAPlane() {
         waitAtGate();
     }
     std::cout << "[Passenger " << passengerID << "]  skonczylem";
-    FileUtils::saveToFile(std::to_string(passengerID) + ";" + std::to_string(happiness));
+    FileUtils::saveToFile(
+        std::to_string(passengerID) + ";" + std::to_string(numberOf) + ";" + std::to_string(happiness));
     isFinished = true;
 }
 
