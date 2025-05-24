@@ -14,6 +14,7 @@
 class Gate {
     int index = 0;
     int limit = 0;
+    int *_currentPass = nullptr; //wskaźnik na liczbę pasażerów, którzy mogą wejść przez bramkę
     bool isAvailableForPlanes = true;
     bool isAvailableForEnteringPassengers = false;
     bool isAvailableForExitingPassengers = false;
@@ -54,9 +55,10 @@ public:
     }
 
 
-    void blockGate(const std::string &planeId, int planeLimit) {
+    void blockGate(const std::string &planeId, int planeLimit, int *currentPass) {
         std::lock_guard<std::mutex> lock(mutex);
         limit = planeLimit;
+        _currentPass = currentPass;
         isAvailableForPlanes = false;
         currentPlaneId = planeId;
     }
@@ -122,6 +124,7 @@ public:
             return false;
         }
         limit -= passengerSize;
+        *_currentPass += passengerSize;
         flightNumber = currentPlaneId;
         return true;
     }

@@ -37,7 +37,7 @@ void Plane::land() {
 }
 
 void Plane::disembarkPassengers() {
-    if (airport.getFlightControlTower().requestTaxiingFromRunway(*this, gateIndex)) {
+    if (airport.getFlightControlTower().requestTaxiingFromRunway(*this, gateIndex, &passengersOnBoard)) {
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is taxiing to gate " << gateIndex << std::endl;
         status = PlaneStatus::TaxiingFromRunway;

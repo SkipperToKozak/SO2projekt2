@@ -109,7 +109,7 @@ void drawRunwayBox(RunwayBox b) {
         }
     }
     wrefresh(win);
-    delwin(win); // ważne, by nie zostawiać "śmieci" w pamięci
+    // delwin(win); // ważne, by nie zostawiać "śmieci" w pamięci
 }
 
 void AirportView::display() {
@@ -137,7 +137,7 @@ void AirportView::display() {
     getmaxyx(stdscr, rows, cols);
 
     while (true) {
-        // clear();
+        this_thread::sleep_for(20ms);
 
         mvprintw(0, 0, (to_string(rows) + to_string(cols)).c_str());
 
@@ -147,7 +147,12 @@ void AirportView::display() {
         int box_width = (cols - 6) / 2; // 2 boxy + margines
         int box_height = rows - 6;
         // Rysowanie boxów
-        PassengerBox passengers = {2, 1, WIDTH, HEIGHT, "Pasazerowie", airportController.getPassengersInfo()};
+        PassengerBox passengers = {
+            2, 1, WIDTH,
+            airportController.getPassengersInfo().empty() ? 1 : int(airportController.getPassengersInfo().size()),
+            "Pasazerowie",
+            airportController.getPassengersInfo()
+        };
         //TODO STAŁE WARTOŚCI SZER I WYS
         PlaneBox planes = {WIDTH + 4, 1, WIDTH, HEIGHT, "Samoloty", airportController.getPlanesInfo()};
 
