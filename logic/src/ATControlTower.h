@@ -41,7 +41,7 @@ public:
 
     bool requestBoarding(Plane &plane);
 
-    bool requestDisembarking(Plane &plane, int &gateIndex);
+    bool requestTaxiingFromRunway(Plane &plane, int &gateIndex, int *currentPass);
 
     bool requestRunwayAvailability(Plane &plane, int &runwayIndex);
 

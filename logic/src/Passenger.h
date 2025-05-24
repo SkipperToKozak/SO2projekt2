@@ -20,6 +20,7 @@ enum class PassengerStatus {
     // InFlight,
     ExitingPlane,
     Disembarked,
+    CollectingLuggage,
     Leaving
 };
 
@@ -33,6 +34,7 @@ inline std::string toString(PassengerStatus status) {
         case PassengerStatus::OnBoard: return "OnBoard";
         case PassengerStatus::ExitingPlane: return "ExitingPlane";
         case PassengerStatus::Disembarked: return "Disembarked";
+        case PassengerStatus::CollectingLuggage: return "CollectingLuggage";
         case PassengerStatus::Leaving: return "Leaving";
         default: return "Unknown";
     }
@@ -40,6 +42,7 @@ inline std::string toString(PassengerStatus status) {
 
 class Passenger {
     Terminal &terminal;
+    std::atomic<bool> isFinished = false;
     int passengerID = 0;
     int numberOf = 0;
     int happiness = 100;
@@ -56,7 +59,7 @@ class Passenger {
 
     void waitAtGate();
 
-    void boardPlane(std::string &flightNumber);
+    void boardPlane();
 
     //leaving a plane
     void exitPlane();
@@ -74,9 +77,10 @@ public:
         numberOf = randInt(1, 10);
     }
 
-    explicit Passenger(Terminal &terminal): terminal(terminal) {
-        numberOf = randInt(1, 10);
+    explicit Passenger(Terminal &terminal, int passengerID, int numberOf): terminal(terminal), numberOf(numberOf),
+                                                                           passengerID(passengerID) {
     }
+
 
     // Passenger(Passenger &&other) noexcept
     //     : terminal(other.terminal),
@@ -124,6 +128,10 @@ public:
 
     int getNumberOf() const {
         return numberOf;
+    }
+
+    bool getPassengerFinished() const {
+        return isFinished;
     }
 };
 

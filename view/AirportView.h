@@ -7,6 +7,8 @@
 
 
 #pragma once
+#include <curses.h>
+
 #include "AirportController.h"
 // #include <vector>
 
@@ -21,6 +23,8 @@ public:
     AirportController &airportController;
 
 private:
+    // wskaźnik do okna ncurses
+
 
 public:
     // void show();

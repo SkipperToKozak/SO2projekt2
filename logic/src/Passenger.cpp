@@ -6,6 +6,8 @@
 #include <iostream>
 #include <thread>
 
+#include "utilities/FileUtils.h"
+
 void Passenger::runGettingOnAPlane() {
     arriveAtAirport();
     checkIn();
@@ -13,6 +15,9 @@ void Passenger::runGettingOnAPlane() {
     while (status != PassengerStatus::OnBoard) {
         waitAtGate();
     }
+    std::cout << "[Passenger " << passengerID << "]  skonczylem";
+    FileUtils::saveToFile(std::to_string(passengerID) + ";" + std::to_string(happiness));
+    isFinished = true;
 }
 
 void Passenger::runLeavingThePlane() {
@@ -20,12 +25,12 @@ void Passenger::runLeavingThePlane() {
     proceedToTerminal();
     collectLuggage();
     leaveAirport();
+    isFinished = true;
 }
 
 
 void Passenger::run() {
     // while (true) {
-    status = PassengerStatus::ExitingPlane;
     happiness = 100;
     flightNumber = " ";
     runGettingOnAPlane();
@@ -64,19 +69,20 @@ void Passenger::waitAtGate() {
     std::cout << "is waiting at the gate." << std::endl;
     // Implementacja logiki oczekiwania pasażera przy bramce
     std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
-    if (!terminal.isGateOpenedForPassengers(gateIndex, passengerID)) {
+    if (!terminal.isGateOpenedForPassengers(gateIndex, passengerID, numberOf)) {
         if (happiness > 0) {
             happiness -= 10;
         }
         waitAtGate();
-    } else boardPlane(flightNumber);
+    } else boardPlane();
 }
 
-void Passenger::boardPlane(std::string &flightNumber) {
+void Passenger::boardPlane() {
     status = PassengerStatus::Boarding;
     std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
-    if (terminal.goThroughGate(numberOf, flightNumber)) {
+    if (terminal.goThroughGate(gateIndex, numberOf, flightNumber)) {
         status = PassengerStatus::OnBoard;
+        std::this_thread::sleep_for(std::chrono::seconds(5)); // Czas przejścia przez bramkę
         //przechodzenie przez bramke, jesli brak miejsc to sie odbija
         // Implementacja logiki wchodzenia pasażera do samolotu
         std::cout << "[Passenger " << passengerID << "] ";
@@ -93,34 +99,38 @@ void Passenger::boardPlane(std::string &flightNumber) {
 //Leaving a plane
 
 void Passenger::exitPlane() {
-    // Implementacja logiki opuszczania samolotu przez pasażera
+    // Implementacja logiki ouszczania samolotu przez pasażera
+    status = PassengerStatus::ExitingPlane;
     std::cout << "[Passenger " << passengerID << "] ";
     std::cout << "is exiting the plane." << std::endl;
 
-    std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
+    std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
 }
 
 void Passenger::proceedToTerminal() {
+    status = PassengerStatus::Disembarked;
     std::cout << "[Passenger " << passengerID << "] ";
     std::cout << "is proceeding to the terminal." << std::endl;
 
-    std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
+    std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
     // Implementacja logiki przejścia pasażera do terminalu
 }
 
 void Passenger::collectLuggage() {
+    status = PassengerStatus::CollectingLuggage;
     std::cout << "[Passenger " << passengerID << "] ";
     std::cout << "is collecting luggage." << std::endl;
 
-    std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
+    std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 6)));
     // Implementacja logiki odbierania bagażu przez pasażera
 }
 
 void Passenger::leaveAirport() {
+    status = PassengerStatus::Leaving;
     std::cout << "[Passenger " << passengerID << "] ";
     std::cout << "is leaving the airport." << std::endl;
 
-    std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
+    std::this_thread::sleep_for(std::chrono::seconds(6));
     // Implementacja logiki opuszczania lotniska przez pasażera
 }
 

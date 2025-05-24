@@ -5,6 +5,8 @@
 #ifndef AIRPORT_H
 #define AIRPORT_H
 
+#include <deque>
+#include <list>
 #include <vector>
 #include <mutex>
 #include <thread>
@@ -12,13 +14,14 @@
 #include "ATControlTower.h"
 #include "Passenger.h"
 #include "Plane.h"
+#include "utilities/Config.h"
 
 //AIRPORT CONFIG
 #define NUM_RUNWAYS 4
 #define NUM_HANGARS 5
 #define NUM_TERMINALS 2
 #define NUM_GATES (NUM_RUNWAYS*3)
-#define NUM_PASSENGERS 10
+#define NUM_PASSENGERS 15
 #define NUM_PLANES 10
 
 //PLANES INIT CONFIG
@@ -40,7 +43,8 @@ class Airport {
     int planesNumber = 0;
     vector<thread> planes_threads;
 
-    vector<Passenger> passengers;
+
+    list<Passenger> passengers;
     int passengersNumber = 0;
     vector<thread> passengers_threads;
 
@@ -50,13 +54,14 @@ class Airport {
     std::mutex passengersMutex;
 
 public:
-    Airport()
-        : atControlTower(*this, NUM_RUNWAYS), terminal(NUM_GATES) {
+    Airport(Config config)
+        : atControlTower(*this, stoi(config.getValue("RUNWAYS"))),
+          terminal(*this, stoi(config.getValue("RUNWAYS")) * 3) {
     }
 
     bool isFlightNumberAvailable(string flightNumber);
 
-    vector<Passenger> &getPassengers() {
+    list<Passenger> &getPassengers() {
         // std::lock_guard<std::mutex> lock(passengersMutex);
         cout << "POBIERAM PASAZEROW" << endl;
         return passengers;
@@ -79,9 +84,11 @@ public:
 
     void run();
 
+    void cleanupFinishedPassengers();
+
     void addPassengersGettingOnAPlane();
 
-    void addPassengersLeavingThePlane(int size);
+    void addPassengersLeavingThePlane(int &size);
 
     void addPlanes();
 };

@@ -28,7 +28,7 @@ void Plane::land() {
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is landing. " << std::endl;
         status = PlaneStatus::Landing;
-        std::this_thread::sleep_for(std::chrono::seconds(randInt(20, 35))); //LANDING SET FOR 10s
+        std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 3))); //LANDING SET FOR 25-35 s
     } else {
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is waiting for landing." << std::endl;
@@ -37,7 +37,7 @@ void Plane::land() {
 }
 
 void Plane::disembarkPassengers() {
-    if (airport.getFlightControlTower().requestDisembarking(*this, gateIndex)) {
+    if (airport.getFlightControlTower().requestTaxiingFromRunway(*this, gateIndex, &passengersOnBoard)) {
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is taxiing to gate " << gateIndex << std::endl;
         status = PlaneStatus::TaxiingFromRunway;
@@ -45,6 +45,8 @@ void Plane::disembarkPassengers() {
         airport.getFlightControlTower().releaseRunway(*this);
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is disembarking passengers." << std::endl;
+        airport.getTerminal().startDisembarkation(passengersOnBoard);
+        airport.getTerminal().setGateOpenedForExitingPassengers(gateIndex);
         status = PlaneStatus::Disembarking;
         std::this_thread::sleep_for(std::chrono::seconds(randInt(3, 8))); //DISAMBARKING SET FOR 10s
     } else {
@@ -55,7 +57,6 @@ void Plane::disembarkPassengers() {
         disembarkPassengers();
     }
     // Implement the logic for disembarking passengers
-    status = PlaneStatus::Disembarking;
     std::this_thread::sleep_for(std::chrono::seconds(rand() % 3 + 10)); //DISEMBARKING SET FOR 10s
 }
 
@@ -74,6 +75,7 @@ void Plane::refuel() {
     std::cout << "Refueling plane." << std::endl;
     while (currentFuel < fuelCapacity) {
         if (currentFuel + 20 > fuelCapacity) {
+            //todo zmiana
             currentFuel = fuelCapacity;
         } else {
             currentFuel += 20;

@@ -7,6 +7,8 @@
 
 
 #pragma once
+#include <utility>
+
 #include "src/Airport.h"
 // #include "src/Airport.h"
 // #include "AirportView.h"
@@ -34,7 +36,7 @@ struct PassengerViewModel {
 
 struct RunwayViewModel {
     int runwayID;
-    int sizeT;
+    std::string currentPlaneId;
     std::string statusText;
 };
 
@@ -47,7 +49,7 @@ struct GateViewModel {
 
 class AirportController {
 public:
-    AirportController() {
+    AirportController(Config config) : airport(std::move(config)) {
         airport.initialize();
     };
     Airport airport;

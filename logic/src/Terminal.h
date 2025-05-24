@@ -15,11 +15,12 @@
 inline std::string terminalTag = "[AT TERMINAL] "; //air traffic control tower tag
 
 class Terminal {
+    Airport &airport;
     std::vector<Gate> gates;
     mutable std::mutex mutex;
 
 public:
-    explicit Terminal(int numGates) {
+    explicit Terminal(Airport &airport, int numGates): airport(airport) {
         for (int i = 0; i < numGates; ++i) {
             gates.emplace_back(i);
         }
@@ -27,11 +28,11 @@ public:
 
     //do przerobienia w kontekście mutexów (lockguard raczej powinien być w gacie)
     //przekminic tez to czy nie lepiej jakos inaczej zarzadzac przypisywaniem indexu gate'a
-    Gate *assignGate(const std::string &planeId, int planeLimit) {
+    Gate *assignGate(const std::string &planeId, int planeLimit, int *currentPass) {
         std::lock_guard<std::mutex> lock(mutex);
         for (auto &gate: gates) {
             if (gate.isGateAvailableForPlanes()) {
-                gate.blockGate(planeId, planeLimit);
+                gate.blockGate(planeId, planeLimit, currentPass);
                 return &gate;
             }
         }
@@ -76,10 +77,10 @@ public:
         gates[gateIndex].setGateClosedForEnteringPassengers();
     }
 
-    bool isGateOpenedForPassengers(int &gateIndex, int passengerID) {
+    bool isGateOpenedForPassengers(int &gateIndex, int passengerID, int passengerSize) {
         // std::lock_guard<std::mutex> lock(mutex);
         for (auto &gate: gates) {
-            if (gate.isGateAvailableForEnteringPassengers()) {
+            if (gate.isGateAvailableForEnteringPassengers() && gate.getLimit() >= passengerSize) {
                 gateIndex = gate.getIndex();
                 std::cout << terminalTag;
                 std::cout << "Passenger " << passengerID << " is boarding at gate " << gateIndex << std::endl;
@@ -89,15 +90,19 @@ public:
         return false;
     }
 
-    bool goThroughGate(int passengerSize, std::string &flightNumber) {
+    bool goThroughGate(int &gateIndex, int passengerSize, std::string &flightNumber) {
         std::lock_guard<std::mutex> lock(mutex);
-        for (auto &gate: gates) {
-            if (gate.isGateAvailableForEnteringPassengers()) {
-                return gate.enterThroughGate(passengerSize, flightNumber);;
-            }
+
+        if (gates[gateIndex].isGateAvailableForEnteringPassengers()) {
+            return gates[gateIndex].enterThroughGate(passengerSize, flightNumber);
         }
+        gateIndex = -1;
         return false;
     }
+
+    void startDisembarkation(int &numOfPassengers);
+
+    void setGateOpenedForExitingPassengers(int gateIndex);
 
     std::vector<Gate> &getGates() {
         return gates;
