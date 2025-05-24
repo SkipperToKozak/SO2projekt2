@@ -74,6 +74,7 @@ vector<RunwayViewModel> AirportController::getRunwaysInfo() {
             runwayViewModel.statusText = "Available";
         else
             runwayViewModel.statusText = "Occupied";
+        runwayViewModel.currentPlaneId = runway.getCurrentPlaneID();
         runwayViewVec.push_back(runwayViewModel);
     }
     return runwayViewVec;

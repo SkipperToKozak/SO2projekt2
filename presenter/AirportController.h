@@ -34,7 +34,7 @@ struct PassengerViewModel {
 
 struct RunwayViewModel {
     int runwayID;
-    int sizeT;
+    std::string currentPlaneId;
     std::string statusText;
 };
 

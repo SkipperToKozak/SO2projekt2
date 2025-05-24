@@ -59,7 +59,7 @@ class Passenger {
 
     void waitAtGate();
 
-    void boardPlane(std::string &flightNumber);
+    void boardPlane();
 
     //leaving a plane
     void exitPlane();

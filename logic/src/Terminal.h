@@ -77,10 +77,10 @@ public:
         gates[gateIndex].setGateClosedForEnteringPassengers();
     }
 
-    bool isGateOpenedForPassengers(int &gateIndex, int passengerID) {
+    bool isGateOpenedForPassengers(int &gateIndex, int passengerID, int passengerSize) {
         // std::lock_guard<std::mutex> lock(mutex);
         for (auto &gate: gates) {
-            if (gate.isGateAvailableForEnteringPassengers()) {
+            if (gate.isGateAvailableForEnteringPassengers() && gate.getLimit() >= passengerSize) {
                 gateIndex = gate.getIndex();
                 std::cout << terminalTag;
                 std::cout << "Passenger " << passengerID << " is boarding at gate " << gateIndex << std::endl;
@@ -90,13 +90,13 @@ public:
         return false;
     }
 
-    bool goThroughGate(int passengerSize, std::string &flightNumber) {
+    bool goThroughGate(int &gateIndex, int passengerSize, std::string &flightNumber) {
         std::lock_guard<std::mutex> lock(mutex);
-        for (auto &gate: gates) {
-            if (gate.isGateAvailableForEnteringPassengers()) {
-                return gate.enterThroughGate(passengerSize, flightNumber);;
-            }
+
+        if (gates[gateIndex].isGateAvailableForEnteringPassengers()) {
+            return gates[gateIndex].enterThroughGate(passengerSize, flightNumber);
         }
+        gateIndex = -1;
         return false;
     }
 
