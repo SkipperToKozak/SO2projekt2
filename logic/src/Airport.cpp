@@ -40,7 +40,7 @@ void Airport::initialize() {
         int passengerLimit = rand() % PLANE_PASSENGER_LIMIT + 10;
         int passengersOnBoard = rand() % passengerLimit + 1;
         int fuelCapacity = rand() % (MAX_PLANE_FUEL_CAPACITY - MIN_PLANE_FUEL_CAPACITY) + MIN_PLANE_FUEL_CAPACITY;
-        int currentFuel = rand() % (fuelCapacity - int(0.3 * fuelCapacity) - 1) + int(0.3 * fuelCapacity);
+        int currentFuel = rand() % (fuelCapacity - int(0.6 * fuelCapacity) - 1) + int(0.6 * fuelCapacity);
 
         //Przypisanie do samolotu lotniska
         planes.emplace_back(*this, flightNumber, passengersOnBoard, passengerLimit, currentFuel, fuelCapacity,

@@ -4,27 +4,43 @@
 
 #ifndef SO2PROJEKT2_GROUNDSERVICES_H
 #define SO2PROJEKT2_GROUNDSERVICES_H
-
 #include <vector>
-#include <memory>
-#include "resources/Vehicle.h"
+
 #include "resources/RefuellingTruck.h"
 #include "resources/TechnicalSupport.h"
 
+
 class GroundServices {
+    int numCars;
+    RefuellingTruck refuellingTruck;
+    std::vector<TechnicalSupport> techSupportCars;
+
 public:
-    void initializeServices() {
-
-
-        vehicles.push_back(std::make_unique<RefuellingTruck>());
-        vehicles.push_back(std::make_unique<TechnicalSupport>());
-        //moze jednak zrobic te klasy osobno
+    explicit GroundServices(int numCars) : numCars(numCars), refuellingTruck(0) {
+        ;
+        techSupportCars.reserve(numCars);
+        for (int i = 0; i < numCars; ++i) {
+            techSupportCars.emplace_back();
+        }
     }
 
-private:
-    std::vector<std::unique_ptr<Vehicle>> vehicles;
+    RefuellingTruck getRefuellingTruck() {
+        return refuellingTruck;
+    }
 
+    bool requestTechSupportAvailability(std::string planeID, int &gateIndex) {
+        for (auto &car: techSupportCars) {
+            if (!car.isInUse()) {
+                car.performTurnaroundCheck(planeID, gateIndex);
+                return true; // Found an available technical support car
+            }
+        }
+        return false; // No available technical support cars
+    };
 
+    std::vector<TechnicalSupport> &getTechSupportCars() {
+        return techSupportCars;
+    }
 };
 
 

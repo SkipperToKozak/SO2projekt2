@@ -63,8 +63,18 @@ void Plane::disembarkPassengers() {
 void Plane::turnaroundCheck() {
     std::cout << "[Plane " << flightNumber << "] ";
     // Implement the logic for disembarking passengers
-    std::cout << "Turnaround check." << std::endl;
-    status = PlaneStatus::TurnaroundCheck;
+    while (status != PlaneStatus::TurnaroundCheck) {
+        if (airport.getGroundServices().requestTechSupportAvailability(flightNumber, gateIndex)) {
+            std::cout << "[Plane " << flightNumber << "] ";
+            std::cout << "TechSupport is available." << std::endl;
+            status = PlaneStatus::TurnaroundCheck;
+            std::cout << "Turnaround check." << std::endl;
+        } else {
+            std::cout << "[Plane " << flightNumber << "] ";
+            std::cout << "Waiting for TechSupport." << std::endl;
+            this_thread::sleep_for(std::chrono::seconds(3));
+        }
+    }
     std::this_thread::sleep_for(std::chrono::seconds(rand() % 3 + 10)); //DISEMBARKING SET FOR 10s
 }
 
@@ -74,11 +84,13 @@ void Plane::refuel() {
     // Implement the logic for refueling
     std::cout << "Refueling plane." << std::endl;
     while (currentFuel < fuelCapacity) {
-        if (currentFuel + 20 > fuelCapacity) {
+        if (currentFuel + 15 > fuelCapacity) {
             //todo zmiana
             currentFuel = fuelCapacity;
+            airport.setAirportFuel(airport.getAirportFuel() - (fuelCapacity - currentFuel));
         } else {
-            currentFuel += 20;
+            currentFuel += 15;
+            airport.setAirportFuel(airport.getAirportFuel() - 15);
         }
         this_thread::sleep_for(1s);
         std::cout << "[Plane " << flightNumber << "] ";
@@ -161,7 +173,7 @@ void Plane::inFlight() {
         taxiing();
         takeOff();
         inFlight();
-        startingDelay = 30;
+        startingDelay = 45;
     }
 }
 

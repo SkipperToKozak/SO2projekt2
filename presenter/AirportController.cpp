@@ -80,3 +80,18 @@ vector<RunwayViewModel> AirportController::getRunwaysInfo() {
     return runwayViewVec;
 }
 
+vector<TechSupportViewModel> AirportController::getTechSupportInfo() {
+    std::lock_guard<std::mutex> lock(mutex);
+    vector<TechSupportViewModel> techSupportViewVec;
+    for (const auto &techSupport: airport.getGroundServices().getTechSupportCars()) {
+        TechSupportViewModel techSupportViewModel;
+        techSupportViewModel.maintenanceID = techSupport.getMaintenanceID();
+        techSupportViewModel.gateIndex = techSupport.getGateIndex();
+        techSupportViewModel.maintenanceType = toString(techSupport.getMaintenanceType());
+        techSupportViewModel.planeId = techSupport.getPlaneId();
+
+        techSupportViewVec.push_back(techSupportViewModel);
+    }
+    return techSupportViewVec;
+}
+

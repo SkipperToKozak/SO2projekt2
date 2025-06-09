@@ -46,12 +46,6 @@ add_executable(SO2projekt2
         logic/src/utilities/randomise.h
         logic/src/GroundServices.cpp
         logic/src/GroundServices.h
-        logic/src/resources/Vehicle.cpp
-        logic/src/resources/Vehicle.h
-        logic/src/resources/RefuellingTruck.cpp
-        logic/src/resources/RefuellingTruck.h
-        logic/src/resources/TechnicalSupport.cpp
-        logic/src/resources/TechnicalSupport.h
         presenter/AirportController.cpp
         presenter/AirportController.h
         view/AirportView.cpp
@@ -59,6 +53,10 @@ add_executable(SO2projekt2
         logic/src/utilities/timer.h
         logic/src/utilities/Config.h
         logic/src/utilities/FileUtils.h
+        logic/src/resources/TechnicalSupport.cpp
+        logic/src/resources/TechnicalSupport.h
+        logic/src/resources/RefuellingTruck.cpp
+        logic/src/resources/RefuellingTruck.h
 )
 target_link_libraries(SO2projekt2 pdcurses)
 # Linkowanie bibliotek SFML

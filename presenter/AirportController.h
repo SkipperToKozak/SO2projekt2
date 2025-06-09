@@ -47,6 +47,14 @@ struct GateViewModel {
     std::string statusText;
 };
 
+struct TechSupportViewModel {
+    int maintenanceID; // Unikalny identyfikator przeglądu technicznego
+    bool inUse;
+    int gateIndex;
+    std::string maintenanceType;
+    std::string planeId; // Identyfikator samolotu, który jest poddawany przeglądowi
+};
+
 class AirportController {
 public:
     AirportController(Config config) : airport(std::move(config)) {
@@ -61,6 +69,8 @@ public:
     vector<GateViewModel> getGatesInfo();
 
     vector<RunwayViewModel> getRunwaysInfo();
+
+    vector<TechSupportViewModel> getTechSupportInfo();
 
     // AirportView &view;
 

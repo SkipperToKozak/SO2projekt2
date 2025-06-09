@@ -38,6 +38,13 @@ typedef struct {
     vector<RunwayViewModel> content;
 } RunwayBox;
 
+typedef struct {
+    int x, y, width, height;
+    char title[32];
+    vector<TechSupportViewModel> content;
+} TechSupportBox;
+
+
 void drawPlaneBox(PlaneBox b) {
     WINDOW *win = newwin(b.height, b.width, b.y, b.x);
 
@@ -119,6 +126,21 @@ void drawRunwayBox(RunwayBox b) {
     delwin(win); // ważne, by nie zostawiać "śmieci" w pamięci
 }
 
+void drawTechSupportBox(TechSupportBox b) {
+    WINDOW *win = newwin(b.height, b.width, b.y, b.x);
+    box(win, 0, 0);
+    mvwprintw(win, 0, 2, "%s", b.title);
+    for (int i = 0; i < b.content.size(); i++) {
+        if (i < b.height - 2) {
+            mvwprintw(win, i + 1, 1, "ID: %2d %2d %s %s", b.content[i].maintenanceID, b.content[i].gateIndex,
+                      b.content[i].planeId.c_str(), b.content[i].maintenanceType.c_str());
+        }
+    }
+    wrefresh(win);
+    delwin(win); // ważne, by nie zostawiać "śmieci" w pamięci
+}
+
+
 void AirportView::display() {
     initscr();
     noecho();
@@ -177,11 +199,15 @@ void AirportView::display() {
         RunwayBox runway = {
             3 * WIDTH - 10 + 8, 1, WIDTH - 10, HEIGHT, "Pas startowy", airportController.getRunwaysInfo()
         };
+        TechSupportBox tec = {
+            2 * WIDTH + 6, 1 + HEIGHT + 2, WIDTH - 10, HEIGHT, "TechSupport", airportController.getTechSupportInfo()
+        };
 
         drawPassengerBox(passengers);
         drawPlaneBox(planes);
         drawGateBox(gates);
         drawRunwayBox(runway);
+        drawTechSupportBox(tec);
 
 
         // Górny rząd: statusy samolotów

@@ -1,24 +1,88 @@
 //
-// Created by Skipper on 19.05.2025.
+// Created by Skipper on 09.06.2025.
 //
 
-#ifndef SO2PROJEKT2_TECHNICALSUPPORT_H
-#define SO2PROJEKT2_TECHNICALSUPPORT_H
-
-#include "Vehicle.h"
+#ifndef TECHNICALSUPPORT_H
+#define TECHNICALSUPPORT_H
 #include <iostream>
 
-class TechnicalSupport : public Vehicle {
-public:
+enum class MaintenanceType {
+    TurnaroundCheck, // Przegląd techniczny przed odlotem
+    Refueling, // Tankowanie samolotu
+    Other // Inne przeglądy techniczne
+};
 
-    void performTask(const std::string &planeId) override {
-        std::cout << "[TECH-SUPPORT " << vehicleID << "] ";
-        std::cout << "Providing technical support to plane with ID: " << planeId << std::endl;
+inline std::string toString(MaintenanceType type) {
+    switch (type) {
+        case MaintenanceType::TurnaroundCheck: return "Turnaround Check";
+        case MaintenanceType::Refueling: return "Refueling";
+        case MaintenanceType::Other: return "Other";
+        default: return "Unknown";
+    }
+}
+
+
+class TechnicalSupport {
+    int maintenanceID = 0; // Unikalny identyfikator przeglądu technicznego
+    bool inUse = false;
+    int gateIndex = -1;
+    MaintenanceType maintenanceType = MaintenanceType::Other;
+    std::string planeId; // Identyfikator samolotu, który jest poddawany przeglądowi
+
+public:
+    // Metoda do przeprowadzania przeglądów technicznych
+    void performTurnaroundCheck(std::string &planeID, int gateID) {
+        // Logika przeglądu technicznego
+        maintenanceType = MaintenanceType::TurnaroundCheck;
+        planeId = planeID;
+        gateIndex = gateID;
+        inUse = true; // Ustawienie przeglądu jako w użyciu
+        std::cout << "Performing technical maintenance..." << std::endl;
+        // Można dodać więcej szczegółów dotyczących przeglądu
     }
 
-    std::string getType() const override {
-        return "Technical Support Vehicle";
+    void refuelPlane() {
+        // Logika tankowania samolotu
+        maintenanceType = MaintenanceType::Refueling;
+        std::cout << "Refueling plane: " << planeId << std::endl;
+        // Można dodać więcej szczegółów dotyczących tankowania
+    }
+
+    void setFree() {
+        // Logika zwalniania przeglądu technicznego
+        std::cout << "Technical maintenance completed for plane: " << planeId << std::endl;
+        maintenanceType = MaintenanceType::Other; // Resetowanie typu przeglądu
+        planeId.clear();
+        inUse = false;
+        gateIndex = -1; // Resetowanie indeksu bramki
+    }
+
+    void setInUse() {
+        // Logika ustawiania przeglądu technicznego jako w użyciu
+        inUse = true;
+        std::cout << "Technical maintenance is now in use for plane: " << planeId << std::endl;
+    }
+
+    [[nodiscard]] bool isInUse() const {
+        return inUse;
+    }
+
+    [[nodiscard]] int getGateIndex() const {
+        return gateIndex;
+    }
+
+    [[nodiscard]] std::string getPlaneId() const {
+        return planeId;
+    }
+
+    [[nodiscard]] MaintenanceType getMaintenanceType() const {
+        return maintenanceType;
+    }
+
+    [[nodiscard]] int getMaintenanceID() const {
+        return maintenanceID;
     }
 };
 
-#endif //SO2PROJEKT2_TECHNICALSUPPORT_H
+
+#endif //TECHNICALSUPPORT_H

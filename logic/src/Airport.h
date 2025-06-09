@@ -12,6 +12,7 @@
 #include <thread>
 
 #include "ATControlTower.h"
+#include "GroundServices.h"
 #include "Passenger.h"
 #include "Plane.h"
 #include "utilities/Config.h"
@@ -50,13 +51,17 @@ class Airport {
 
     ATControlTower atControlTower;
     Terminal terminal;
+    GroundServices groundServices;
+
+    int airportFuel = 3000; // Initial fuel available at the airport
 
     std::mutex passengersMutex;
 
 public:
     Airport(Config config)
         : atControlTower(*this, stoi(config.getValue("RUNWAYS"))),
-          terminal(*this, stoi(config.getValue("RUNWAYS")) * 3) {
+          terminal(*this, stoi(config.getValue("RUNWAYS")) * 3),
+          groundServices(stoi(config.getValue("RUNWAYS")) * 3) {
     }
 
     bool isFlightNumberAvailable(string flightNumber);
@@ -77,6 +82,18 @@ public:
 
     Terminal &getTerminal() {
         return terminal;
+    }
+
+    GroundServices &getGroundServices() {
+        return groundServices;
+    }
+
+    int getAirportFuel() {
+        return airportFuel;
+    }
+
+    void setAirportFuel(int fuel) {
+        airportFuel = fuel;
     }
 
 

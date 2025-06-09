@@ -69,7 +69,7 @@ void Passenger::waitAtGate() {
     std::cout << "[Passenger " << passengerID << "] ";
     std::cout << "is waiting at the gate." << std::endl;
     // Implementacja logiki oczekiwania pasażera przy bramce
-    std::this_thread::sleep_for(std::chrono::seconds(randInt(15, 20)));
+    std::this_thread::sleep_for(std::chrono::seconds(randInt(5, 10)));
     if (!terminal.isGateOpenedForPassengers(gateIndex, passengerID, numberOf)) {
         if (happiness > 0) {
             happiness -= 10;
