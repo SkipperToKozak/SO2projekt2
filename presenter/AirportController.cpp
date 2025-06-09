@@ -95,3 +95,8 @@ vector<TechSupportViewModel> AirportController::getTechSupportInfo() {
     return techSupportViewVec;
 }
 
+int AirportController::getAirportFuel() {
+    std::lock_guard<std::mutex> lock(mutex);
+    return airport.getAirportFuel();
+}
+

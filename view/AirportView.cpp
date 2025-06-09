@@ -175,8 +175,10 @@ void AirportView::display() {
         pasHeight = int(airportController.getPassengersInfo().size());
 
         mvprintw(
-            0, 0, ("Resolution: " + to_string(rows) + "x" + to_string(cols) + " Time: " + to_string(getCounter(time))).
+            0, 0, ("Resolution: " + to_string(rows) + "x" + to_string(cols) + " Time: " + to_string(getCounter(time))
+                   + " Airport fuel: " + to_string(airportController.getAirportFuel())).
             c_str());
+
 
         /* Resize the terminal to something larger than the physical screen */
 

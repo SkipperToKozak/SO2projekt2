@@ -72,6 +72,8 @@ public:
 
     vector<TechSupportViewModel> getTechSupportInfo();
 
+    int getAirportFuel();
+
     // AirportView &view;
 
 public:
