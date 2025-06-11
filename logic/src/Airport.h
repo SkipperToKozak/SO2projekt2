@@ -62,7 +62,7 @@ public:
     Airport(Config config)
         : atControlTower(*this, stoi(config.getValue("RUNWAYS"))),
           terminal(*this, stoi(config.getValue("RUNWAYS")) * 3),
-          groundServices(stoi(config.getValue("RUNWAYS")) * 3) {
+          groundServices(stoi(config.getValue("RUNWAYS")) * 2) {
     }
 
     bool isFlightNumberAvailable(string flightNumber);

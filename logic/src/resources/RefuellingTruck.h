@@ -42,15 +42,16 @@ public:
         status = RefuellingTruckStatus::Refuelling;
         while (fuelNeeded < fuelCapacity) {
             std::this_thread::sleep_for(std::chrono::seconds(1)); // Simulate time taken to go for fuel
-            if (fuelNeeded + 10 > fuelCapacity) {
+            if (fuelNeeded + 20 > fuelCapacity) {
                 fuelNeeded = fuelCapacity; // Ensure we don't exceed the fuel capacity
             } else {
-                fuelNeeded += 10; // Truck refuels airport
+                fuelNeeded += 20; // Truck refuels airport
             }
         }
         status = RefuellingTruckStatus::Idle; // Mark the truck as idle after refuelling
         inUse = false; // Mark the truck as not in use
     }
+
     [[nodiscard]] int getTruckID() const {
         return truckID;
     }

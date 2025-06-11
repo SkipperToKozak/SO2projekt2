@@ -16,7 +16,7 @@ inline std::string toString(MaintenanceType type) {
     switch (type) {
         case MaintenanceType::TurnaroundCheck: return "Turnaround Check";
         case MaintenanceType::Refueling: return "Refueling";
-        case MaintenanceType::Other: return "Other";
+        case MaintenanceType::Other: return "Idle";
         default: return "Unknown";
     }
 }
@@ -33,6 +33,7 @@ public:
     explicit TechnicalSupport(int id)
         : maintenanceID(id), inUse(false), gateIndex(-1), maintenanceType(MaintenanceType::Other) {
     }
+
     // Metoda do przeprowadzania przeglądów technicznych
     void performTurnaroundCheck(std::string &planeID, int gateID) {
         // Logika przeglądu technicznego
