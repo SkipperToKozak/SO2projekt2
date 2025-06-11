@@ -80,6 +80,7 @@ public:
     // AirportController(Airport &airport, AirportView &view);
 
     // void run(); // główna pętla odświeżania widoku
+    bool getRefuellingTruckInfo();
 };
 
 

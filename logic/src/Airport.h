@@ -19,6 +19,7 @@
 
 //AIRPORT CONFIG
 #define NUM_RUNWAYS 4
+#define MIN_AIRPORT_FUEL 2500 // Minimum fuel available at the airport
 #define NUM_HANGARS 5
 #define NUM_TERMINALS 2
 #define NUM_GATES (NUM_RUNWAYS*3)
@@ -53,7 +54,7 @@ class Airport {
     Terminal terminal;
     GroundServices groundServices;
 
-    int airportFuel = 3000; // Initial fuel available at the airport
+    std::atomic<int> airportFuel = MIN_AIRPORT_FUEL; // Initial fuel available at the airport
 
     std::mutex passengersMutex;
 
@@ -88,7 +89,7 @@ public:
         return groundServices;
     }
 
-    int getAirportFuel() {
+    std::atomic<int> &getAirportFuel() {
         return airportFuel;
     }
 
@@ -108,6 +109,8 @@ public:
     void addPassengersLeavingThePlane(int &size);
 
     void addPlanes();
+
+    void checkFuelLevel();
 };
 
 

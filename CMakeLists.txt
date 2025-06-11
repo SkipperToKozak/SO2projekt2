@@ -13,7 +13,7 @@ set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
 # Dodanie katalogów z nagłówkami
 include_directories(
-        "C:/biblioteki-cpp/PDCurses-3.8"
+        "C:/Biblioteki/PDCurses-3.8"
         ${CMAKE_SOURCE_DIR}/logic
         ${CMAKE_SOURCE_DIR}/view
         ${CMAKE_SOURCE_DIR}/presenter
@@ -21,7 +21,7 @@ include_directories(
 
 
 )
-link_directories("C:/biblioteki-cpp/PDCurses-3.8/wincon")
+link_directories("C:/Biblioteki/PDCurses-3.8/wincon")
 
 
 # Dodanie plików źródłowych

@@ -56,6 +56,7 @@ class Plane {
     int currentRunway = 0;
     int fuelCapacity = 0;
     int gateIndex = -1;
+    int techSupCarId = -1;
     PlaneStatus status = PlaneStatus::InFlight;
     int startingDelay;
 

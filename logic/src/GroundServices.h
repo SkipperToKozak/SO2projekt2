@@ -20,17 +20,18 @@ public:
         ;
         techSupportCars.reserve(numCars);
         for (int i = 0; i < numCars; ++i) {
-            techSupportCars.emplace_back();
+            techSupportCars.emplace_back(i);
         }
     }
 
-    RefuellingTruck getRefuellingTruck() {
+    RefuellingTruck &getRefuellingTruck() {
         return refuellingTruck;
     }
 
-    bool requestTechSupportAvailability(std::string planeID, int &gateIndex) {
+    bool requestTechSupportAvailability(std::string planeID, int &gateIndex, int &techSupCarIndex) {
         for (auto &car: techSupportCars) {
             if (!car.isInUse()) {
+                techSupCarIndex = car.getMaintenanceID();
                 car.performTurnaroundCheck(planeID, gateIndex);
                 return true; // Found an available technical support car
             }

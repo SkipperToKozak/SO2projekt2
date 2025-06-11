@@ -30,6 +30,9 @@ class TechnicalSupport {
     std::string planeId; // Identyfikator samolotu, który jest poddawany przeglądowi
 
 public:
+    explicit TechnicalSupport(int id)
+        : maintenanceID(id), inUse(false), gateIndex(-1), maintenanceType(MaintenanceType::Other) {
+    }
     // Metoda do przeprowadzania przeglądów technicznych
     void performTurnaroundCheck(std::string &planeID, int gateID) {
         // Logika przeglądu technicznego

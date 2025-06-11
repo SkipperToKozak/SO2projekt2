@@ -64,7 +64,7 @@ void Plane::turnaroundCheck() {
     std::cout << "[Plane " << flightNumber << "] ";
     // Implement the logic for disembarking passengers
     while (status != PlaneStatus::TurnaroundCheck) {
-        if (airport.getGroundServices().requestTechSupportAvailability(flightNumber, gateIndex)) {
+        if (airport.getGroundServices().requestTechSupportAvailability(flightNumber, gateIndex, techSupCarId)) {
             std::cout << "[Plane " << flightNumber << "] ";
             std::cout << "TechSupport is available." << std::endl;
             status = PlaneStatus::TurnaroundCheck;
@@ -84,6 +84,7 @@ void Plane::refuel() {
     // Implement the logic for refueling
     std::cout << "Refueling plane." << std::endl;
     while (currentFuel < fuelCapacity) {
+        airport.getGroundServices().getTechSupportCars().at(techSupCarId).refuelPlane();
         if (currentFuel + 15 > fuelCapacity) {
             //todo zmiana
             currentFuel = fuelCapacity;
@@ -96,6 +97,7 @@ void Plane::refuel() {
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "Refueling plane. Current fuel: " << currentFuel << std::endl;
     }
+    airport.getGroundServices().getTechSupportCars().at(techSupCarId).setFree();
 
     // std::this_thread::sleep_for(std::chrono::seconds(20)); //REFUELING SET FOR 20s
 }
@@ -105,6 +107,7 @@ void Plane::boardPassengers() {
     std::cout << "[Plane " << flightNumber << "] ";
     // Implement the logic for boarding passengers
     std::cout << "Boarding passengers." << std::endl;
+
     status = PlaneStatus::Boarding;
     airport.getFlightControlTower().requestBoarding(*this);
 

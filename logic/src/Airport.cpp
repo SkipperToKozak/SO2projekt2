@@ -60,6 +60,7 @@ void Airport::run() {
 
     thread passengerGenEnteringThread = thread(&Airport::addPassengersGettingOnAPlane, this);
     thread cleanerThread = thread(&Airport::cleanupFinishedPassengers, this);
+    thread fuelCheckThread = thread(&Airport::checkFuelLevel, this);
     // for (auto& passenger : passengers) {
     //     passenger.board();
     //     std::cout << "Passenger is boarding." << std::endl;
@@ -97,6 +98,7 @@ void Airport::run() {
     }
     cleanerThread.join();
     passengerGenEnteringThread.join();
+    fuelCheckThread.join();
 
     std::cout << "Airport simulation ended." << std::endl;
 }
@@ -143,6 +145,18 @@ void Airport::addPassengersGettingOnAPlane() {
             }
         }
     }
+}
+void Airport::checkFuelLevel() {
+    while(true){
+        std::this_thread::sleep_for(std::chrono::seconds(5)); // Check fuel level every 5 seconds
+        {
+            if (airportFuel < 0.95 * MIN_AIRPORT_FUEL) {
+                std::cout << "[AIRPORT] Fuel level is low. Refueling..." << std::endl;
+                groundServices.getRefuellingTruck().goForFuel(airportFuel, MIN_AIRPORT_FUEL);
+            }
+        }
+    }
+
 }
 
 void Airport::addPassengersLeavingThePlane(int &size) {

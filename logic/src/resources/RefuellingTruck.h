@@ -27,6 +27,7 @@ inline std::string to_string(RefuellingTruckStatus status) {
 
 class RefuellingTruck {
     int truckID = 0; // Unique identifier for the refuelling truck
+    bool inUse = false; // Indicates if the truck is currently in use
     RefuellingTruckStatus status = RefuellingTruckStatus::Idle; // Current status of the truck
 
 public:
@@ -34,17 +35,32 @@ public:
         : truckID(id) {
     }
 
-    void goForFuel(int &fuelNeeded, int fuelCapacity) {
+    void goForFuel(std::atomic<int> &fuelNeeded, int fuelCapacity) {
+        inUse = true; // Mark the truck as in use
         status = RefuellingTruckStatus::GoingForFuel;
+        std::this_thread::sleep_for(std::chrono::seconds(10)); // Simulate time taken to go for fuel
         status = RefuellingTruckStatus::Refuelling;
         while (fuelNeeded < fuelCapacity) {
-            std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 5))); // Simulate time taken to go for fuel
-            if (fuelNeeded += 15 > fuelCapacity) {
+            std::this_thread::sleep_for(std::chrono::seconds(1)); // Simulate time taken to go for fuel
+            if (fuelNeeded + 10 > fuelCapacity) {
                 fuelNeeded = fuelCapacity; // Ensure we don't exceed the fuel capacity
             } else {
-                fuelNeeded += 15; // Truck refuels airport
+                fuelNeeded += 10; // Truck refuels airport
             }
         }
+        status = RefuellingTruckStatus::Idle; // Mark the truck as idle after refuelling
+        inUse = false; // Mark the truck as not in use
+    }
+    [[nodiscard]] int getTruckID() const {
+        return truckID;
+    }
+
+    [[nodiscard]] bool &isInUse() {
+        return inUse;
+    }
+
+    [[nodiscard]] RefuellingTruckStatus getStatus() const {
+        return status;
     }
 };
 

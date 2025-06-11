@@ -96,7 +96,11 @@ vector<TechSupportViewModel> AirportController::getTechSupportInfo() {
 }
 
 int AirportController::getAirportFuel() {
-    std::lock_guard<std::mutex> lock(mutex);
+//    std::lock_guard<std::mutex> lock(mutex);
     return airport.getAirportFuel();
+}
+bool AirportController::getRefuellingTruckInfo(){
+    std::lock_guard<std::mutex> lock(mutex);
+    return airport.getGroundServices().getRefuellingTruck().isInUse();
 }
 
