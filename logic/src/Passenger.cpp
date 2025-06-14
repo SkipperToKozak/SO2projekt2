@@ -7,6 +7,7 @@
 #include <thread>
 
 #include "utilities/FileUtils.h"
+#include "src/utilities/Timer.h"
 
 void Passenger::runGettingOnAPlane() {
     arriveAtAirport();
@@ -17,8 +18,10 @@ void Passenger::runGettingOnAPlane() {
     }
     std::cout << "[Passenger " << passengerID << "]  skonczylem";
     FileUtils::saveToFile(
-        std::to_string(passengerID) + ";" + std::to_string(numberOf) + ";" + std::to_string(happiness));
+
+        std::to_string(passengerID) + ";" + std::to_string(numberOf) + ";" + std::to_string(happiness)+ ";" + std::to_string(getCounter(timeAtAirport)), "passenger_stats.csv");
     isFinished = true;
+
 }
 
 void Passenger::runLeavingThePlane() {

@@ -10,6 +10,7 @@
 #include "AirportView.h"
 #include "AirportController.h"
 #include <thread>
+#include "src/utilities/FileUtils.h"
 
 // #include "logic/src/Airport.h"
 typedef struct {
@@ -29,7 +30,8 @@ int main(int argc, char *argv[]) {
 
     // Uruchom Airport::run w osobnym wątku
     std::thread airportThread(&Airport::run, &controller.airport);
-
+    FileUtils::createFile("planes_stats.csv", "FlightNumber;TimeAtAirport;PassengersOnBoardPercentage");
+    FileUtils::createFile("passengers_stats.csv", "PassengerID;Size;Happiness;TimeAtAirport");
     // Wywołaj display w głównym wątku
     view.display();
     controller.getRunwaysInfo();

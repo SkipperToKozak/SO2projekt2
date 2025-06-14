@@ -59,7 +59,7 @@ class Plane {
     int techSupCarId = -1;
     PlaneStatus status = PlaneStatus::InFlight;
     int startingDelay;
-
+    std::chrono::time_point<std::chrono::system_clock> timeAtAirport = std::chrono::high_resolution_clock::now();
     bool ready;
     std::condition_variable cv;
 
@@ -103,6 +103,7 @@ public:
           fuelCapacity(other.fuelCapacity),
           status(other.status),
           startingDelay(other.startingDelay),
+          timeAtAirport(other.timeAtAirport),
           ready(other.ready) {
         // std::mutex i std::condition_variable nie są przenośne — pozostają domyślne
     }
@@ -183,6 +184,8 @@ public:
         id += std::to_string(randInt(100, 999)); // Random number
         return id;
     }
+
+    void statsReset();
 };
 
 

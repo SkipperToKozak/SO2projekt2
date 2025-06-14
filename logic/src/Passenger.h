@@ -47,6 +47,7 @@ class Passenger {
     int numberOf = 0;
     int happiness = 100;
     int gateIndex = 1;
+    std::chrono::time_point<std::chrono::system_clock> timeAtAirport = std::chrono::high_resolution_clock::now();
     std::string flightNumber = " ";
     PassengerStatus status = PassengerStatus::ArrivingAtAirport;
 
@@ -75,6 +76,7 @@ public:
                                                                                flightNumber("TEMP"),
                                                                                passengerID(passengerID) {
         numberOf = randInt(1, 10);
+
     }
 
     explicit Passenger(Terminal &terminal, int passengerID, int numberOf): terminal(terminal), numberOf(numberOf),

@@ -13,6 +13,8 @@
 
 #include "Airport.h"
 #include "ATControlTower.h"
+#include "src/utilities/FileUtils.h"
+#include "src/utilities/Timer.h"
 
 
 void Plane::land() {
@@ -28,6 +30,7 @@ void Plane::land() {
         std::cout << "[Plane " << flightNumber << "] ";
         std::cout << "is landing. " << std::endl;
         status = PlaneStatus::Landing;
+        timeAtAirport = std::chrono::high_resolution_clock::now();
         std::this_thread::sleep_for(std::chrono::seconds(randInt(2, 3))); //LANDING SET FOR 25-35 s
     } else {
         std::cout << "[Plane " << flightNumber << "] ";
@@ -146,6 +149,7 @@ void Plane::takeOff() {
     std::cout << "[Plane " << flightNumber << "] ";
     std::cout << "Took off" << std::endl;
     airport.getFlightControlTower().releaseRunway(*this);
+
 }
 
 void Plane::inFlight() {
@@ -175,9 +179,16 @@ void Plane::inFlight() {
         boardPassengers();
         taxiing();
         takeOff();
+        FileUtils::saveToFile(flightNumber + ";" + to_string(getCounter(timeAtAirport)) + ";" +
+                              to_string(float(passengersOnBoard) / float(passengerLimit)), "planes_stats.csv");
         inFlight();
         startingDelay = 45;
     }
+}
+
+void Plane::statsReset() {
+
+
 }
 
 void Plane::initialize() {
